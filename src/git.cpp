@@ -24,8 +24,8 @@
 
 static std::string dir;
 
-static void script(const char* source) {
-  if (std::system(source) != 0) {
+static void script(const std::string& source) {
+  if (std::system(source.c_str()) != 0) {
     fatal("cannot run script");
   }
 }
@@ -174,8 +174,8 @@ void git_unanchor_ref(const std::string& branch, const std::string& ref) {
   git_capture("update-ref -d refs/patchkeeper/" + branch + "/" + ref);
 }
 
-void git_edit() {
-  script("FILES=$(git --no-pager diff --name-only HEAD~1);"
+void git_edit(const std::string& ref) {
+  script("FILES=$(git --no-pager diff --name-only " + ref + " " + ref + "~1);"
          "if [ \"$FILES\" ]; then"
          "  $EDITOR $FILES;"
          "else"

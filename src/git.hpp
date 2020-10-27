@@ -52,7 +52,7 @@ void git_print_ref(const std::string& ref, const std::string& prefix);
 void git_anchor_ref(const std::string& branch, const std::string& ref);
 void git_unanchor_ref(const std::string& branch, const std::string& ref);
 
-void git_edit();
+void git_edit(const std::string& ref);
 void git_resolve();
 void git_resolve_list();
 

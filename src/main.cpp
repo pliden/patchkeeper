@@ -927,17 +927,20 @@ static void pk_diff_files(bool unrefreshed) {
 //
 // edit
 //
-static void pk_edit() {
+static void pk_edit_inner(const std::string& vref) {
   git_repository();
 
-  const auto& branch = git_branch();
-  patch_load(branch);
+  const auto& ref = git_ref(vref);
 
-  if (patch_pushed().empty()) {
-    fatal("nothing pushed");
-  }
+  git_edit(ref);
+}
 
-  git_edit();
+static void pk_edit() {
+  pk_edit_inner("HEAD");
+}
+
+static void pk_edit_ref(const std::string& vref) {
+  pk_edit_inner(vref);
 }
 
 //
@@ -1549,6 +1552,8 @@ int main(int argc, char** argv) {
   else if (opt_cmd("edit, ed, e", "Edit patched file(s)")) {
     if (opt({})) {
       pk_edit();
+    } else if (opt({"<ref>"})) {
+      pk_edit_ref(opt_value(0));
     }
   }
 
