@@ -1107,10 +1107,41 @@ static void pk_bdelete(const std::string& branch, bool force) {
 //
 // brename
 //
+static void pk_brename_inner(const std::string& old_branch, const std::string& new_branch) {
+  git_branch_rename(old_branch, new_branch);
+
+  patch_load(old_branch);
+
+  for (const auto& ref: patch_hidden()) {
+    git_anchor_ref(new_branch, ref);
+    git_unanchor_ref(old_branch, ref);
+  }
+
+  for (const auto& ref: patch_popped()) {
+    git_anchor_ref(new_branch, ref);
+    git_unanchor_ref(old_branch, ref);
+  }
+
+  patch_store(new_branch);
+
+  patch_hidden().clear();
+  patch_popped().clear();
+  patch_pushed().clear();
+
+  patch_store(old_branch);
+}
+
+static void pk_brename(const std::string& new_branch) {
+  git_repository();
+
+  const auto& old_branch = git_branch();
+  pk_brename_inner(old_branch, new_branch);
+}
+
 static void pk_brename(const std::string& old_branch, const std::string& new_branch) {
   git_repository();
-  // FIXME! Also rename the patch file and refs/patchkeeper/branch dir
-  git_branch_rename(old_branch, new_branch);
+
+  pk_brename_inner(old_branch, new_branch);
 }
 
 //
@@ -1618,7 +1649,9 @@ int main(int argc, char** argv) {
   // brename
   //
   else if (opt_cmd("brename, bren, br", "Rename branch")) {
-    if (opt({"<oldbranch>", "<newbranch>"})) {
+    if (opt({"<newbranch>"})) {
+      pk_brename(opt_value(0));
+    } else if (opt({"<oldbranch>", "<newbranch>"})) {
       pk_brename(opt_value(0), opt_value(1));
     }
   }
