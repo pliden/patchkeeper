@@ -125,6 +125,7 @@ void git_branch_checkout_new(const std::string& branch);
 void git_branch_checkout_new(const std::string& branch, const std::string& start);
 void git_branch_delete(const std::string& branch);
 void git_branch_rename(const std::string& old_branch, const std::string& new_branch);
+void git_branches_prune(const std::string& remote);
 
 void git_remote_add(const std::string& remote, const std::string& url);
 void git_remote_remove(const std::string& remote);

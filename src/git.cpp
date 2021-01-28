@@ -446,6 +446,10 @@ void git_branch_rename(const std::string& old_branch, const std::string& new_bra
   git_capture("branch --move " + old_branch + " " + new_branch);
 }
 
+void git_branches_prune(const std::string& remote) {
+  git_no_capture("fetch --prune " + remote);
+}
+
 void git_remote_add(const std::string& remote, const std::string& url) {
   git_capture("remote add " + remote + " " + url);
 }

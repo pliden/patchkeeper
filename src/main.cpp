@@ -1161,6 +1161,21 @@ static void pk_blist() {
 }
 
 //
+// bprune
+//
+static void pk_bprune() {
+  git_repository();
+
+  git_branches_prune("origin");
+}
+
+static void pk_bprune(const std::string& remote) {
+  git_repository();
+
+  git_branches_prune(remote);
+}
+
+//
 // rnew
 //
 static void pk_rnew(const std::string& remote, const std::string& url) {
@@ -1662,6 +1677,17 @@ int main(int argc, char** argv) {
   else if (opt_cmd("blist, bls, bl", "List branches")) {
     if (opt({})) {
       pk_blist();
+    }
+  }
+
+  //
+  // bprune
+  //
+  else if (opt_cmd("bprune, bpru, bp", "Prune branches")) {
+    if (opt({})) {
+      pk_bprune();
+    } else if (opt({"<remote>"})) {
+      pk_bprune(opt_value(0));
     }
   }
 
