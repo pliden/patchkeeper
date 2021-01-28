@@ -447,7 +447,7 @@ void git_branch_rename(const std::string& old_branch, const std::string& new_bra
 }
 
 void git_remote_add(const std::string& remote, const std::string& url) {
-  git_capture("remote add -m master " + remote + " " + url);
+  git_capture("remote add " + remote + " " + url);
 }
 
 void git_remote_remove(const std::string& remote) {
