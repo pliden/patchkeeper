@@ -1593,6 +1593,17 @@ int main(int argc, char** argv) {
   }
 
   //
+  // udiff
+  //
+  else if (opt_cmd("udiff, ud, u", "Show unrefreshed")) {
+    if (opt({})) {
+      pk_diff(true /* unrefreshed */);
+    } else if (opt({"-f|--files"})) {
+      pk_diff_files(true /* unrefreshed */);
+    }
+  }
+
+  //
   // edit
   //
   else if (opt_cmd("edit, ed, e", "Edit patched file(s)")) {
