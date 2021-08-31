@@ -1583,12 +1583,8 @@ int main(int argc, char** argv) {
   else if (opt_cmd("diff, di, d", "Show patch")) {
     if (opt({})) {
       pk_diff(false /* unrefreshed */);
-    } else if (opt({"-u|--unrefreshed"})) {
-      pk_diff(true /* unrefreshed */);
     } else if (opt({"-f|--files"})) {
       pk_diff_files(false /* unrefreshed */);
-    } else if (opt({"-f|--files", "-u|--unrefreshed"})) {
-      pk_diff_files(true /* unrefreshed */);
     }
   }
 
