@@ -1253,7 +1253,7 @@ int main(int argc, char** argv) {
   //
   // config
   //
-  else if (opt_cmd("config, con, c", "Get/Set configuration options")) {
+  else if (opt_cmd("config, c", "Get/Set configuration options")) {
     if (opt({"<option>"})) {
       pk_config_get(opt_value(0));
     } else if (opt({"<option>", "<value>"})) {
@@ -1443,7 +1443,7 @@ int main(int argc, char** argv) {
   //
   // show
   //
-  else if (opt_cmd("show, sh, s", "Show change")) {
+  else if (opt_cmd("show, s", "Show change")) {
     if (opt({})) {
       pk_show();
     } else if (opt({"<ref>"})) {
@@ -1458,7 +1458,7 @@ int main(int argc, char** argv) {
   //
   // add
   //
-  else if (opt_cmd("add, ad, a", "Add file(s)")) {
+  else if (opt_cmd("add, a", "Add file(s)")) {
     if (opt({"<file>..."})) {
       pk_add(opt_variadic());
     }
@@ -1524,7 +1524,7 @@ int main(int argc, char** argv) {
   //
   // push
   //
-  else if (opt_cmd("push, pus, pu", "Push patch(es)")) {
+  else if (opt_cmd("push, pu", "Push patch(es)")) {
     if (opt({})) {
       pk_push();
     } else if (opt({"<ref>"})) {
@@ -1580,7 +1580,7 @@ int main(int argc, char** argv) {
   //
   // diff
   //
-  else if (opt_cmd("diff, di, d", "Show patch")) {
+  else if (opt_cmd("diff, d", "Show patch")) {
     if (opt({})) {
       pk_diff(false /* unrefreshed */);
     } else if (opt({"-f|--files"})) {
@@ -1591,7 +1591,7 @@ int main(int argc, char** argv) {
   //
   // udiff
   //
-  else if (opt_cmd("udiff, ud, u", "Show unrefreshed")) {
+  else if (opt_cmd("udiff, u", "Show unrefreshed")) {
     if (opt({})) {
       pk_diff(true /* unrefreshed */);
     } else if (opt({"-f|--files"})) {
@@ -1602,7 +1602,7 @@ int main(int argc, char** argv) {
   //
   // edit
   //
-  else if (opt_cmd("edit, ed, e", "Edit patched file(s)")) {
+  else if (opt_cmd("edit, e", "Edit patched file(s)")) {
     if (opt({})) {
       pk_edit();
     } else if (opt({"<ref>"})) {
@@ -1690,7 +1690,7 @@ int main(int argc, char** argv) {
   //
   // bprune
   //
-  else if (opt_cmd("bprune, bpru, bp", "Prune branches")) {
+  else if (opt_cmd("bprune, bp", "Prune branches")) {
     if (opt({})) {
       pk_bprune();
     } else if (opt({"<remote>"})) {
