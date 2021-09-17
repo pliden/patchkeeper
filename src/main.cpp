@@ -648,12 +648,17 @@ static void pk_push_backout(const std::string& vref) {
   const auto& message = git_backout_message(ref);
   git_commit(message);
 
-  const auto& head = git_head();
-  patch_pushed().push_front(head);
+  const auto& head_initial = git_head();
+  patch_pushed().push_front(head_initial);
   patch_store(branch);
 
   git_revert(ref);
   git_commit_amend();
+
+  const auto& head = git_head();
+  patch_pushed().pop_front();
+  patch_pushed().push_front(head);
+  patch_store(branch);
 
   git_print_ref("pushed", head);
 }
