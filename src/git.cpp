@@ -175,7 +175,7 @@ void git_unanchor_ref(const std::string& branch, const std::string& ref) {
 }
 
 void git_edit(const std::string& ref) {
-  script("FILES=$(git --no-pager diff --name-only " + ref + " " + ref + "~1);"
+  script("FILES=$(git --no-pager diff --name-only --diff-filter=d " + ref + " " + ref + "~1);"
          "if [ \"$FILES\" ]; then"
          "  $EDITOR $FILES;"
          "else"
@@ -184,7 +184,7 @@ void git_edit(const std::string& ref) {
 }
 
 void git_resolve() {
-  script("FILES=$(grep -l '<<<<<<<' -- /dev/null $(git --no-pager diff --name-only HEAD));"
+  script("FILES=$(grep -l '<<<<<<<' -- /dev/null $(git --no-pager diff --name-only --diff-filter=d HEAD));"
          "if [ \"$FILES\" ]; then"
          "  for FILE in $FILES; do"
          "    echo $FILE;"
@@ -196,7 +196,7 @@ void git_resolve() {
 }
 
 void git_resolve_list() {
-  script("FILES=$(grep -l '<<<<<<<' -- /dev/null $(git --no-pager diff --name-only HEAD));"
+  script("FILES=$(grep -l '<<<<<<<' -- /dev/null $(git --no-pager diff --name-only --diff-filter=d HEAD));"
          "if [ \"$FILES\" ]; then"
          "  for FILE in $FILES; do"
          "    echo $FILE;"
