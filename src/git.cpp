@@ -175,7 +175,7 @@ void git_unanchor_ref(const std::string& branch, const std::string& ref) {
 }
 
 void git_edit(const std::string& ref) {
-  script("FILES=$(git --no-pager diff --name-only --diff-filter=d " + ref + " " + ref + "~1);"
+  script("FILES=$(git --no-pager diff --name-only --diff-filter=d " + ref + "~1 " + ref + ");"
          "if [ \"$FILES\" ]; then"
          "  $EDITOR $FILES;"
          "else"
