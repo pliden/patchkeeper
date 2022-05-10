@@ -961,7 +961,7 @@ static void pk_list_inner(const std::string& branch, bool current) {
   }
 
   if (current && !patch_pushed().empty()) {
-    git_show(GIT_RED("\u2bc8") " " GIT_GREEN("%h") " %s", patch_pushed().front());
+    git_show(GIT_RED("*") " " GIT_GREEN("%h") " %s", patch_pushed().front());
     patch_pushed().pop_front();
   }
 
@@ -1158,7 +1158,7 @@ static void pk_blist() {
   const auto& current = git_branch();
   for (const auto& branch: git_branches()) {
     if (branch == current) {
-      git_show(GIT_RED("\u2bc8") " " GIT_YELLOW(+ branch +), "HEAD");
+      git_show(GIT_RED("*") " " GIT_YELLOW(+ branch +), "HEAD");
     } else {
       git_show("  " GIT_YELLOW(+ branch +), branch);
     }
