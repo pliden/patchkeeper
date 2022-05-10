@@ -382,25 +382,25 @@ void git_commit(const std::string& message) {
 }
 
 void git_commit_amend() {
-  git_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date --iso-8601=seconds) --no-edit");
+  git_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date -Iseconds) --no-edit");
 }
 
 void git_commit_amend_author() {
-  git_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date --iso-8601=seconds) --no-edit --reset-author");
+  git_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date -Iseconds) --no-edit --reset-author");
 }
 
 void git_commit_amend_edit() {
-  git_no_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date --iso-8601=seconds) --quiet --edit");
+  git_no_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date -Iseconds) --quiet --edit");
 }
 
 void git_commit_amend_message(const std::string& message) {
   const auto& escaped_message = escape_quotes(message);
-  git_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date --iso-8601=seconds) --message \"" + escaped_message + "\"");
+  git_capture("commit --all --amend --allow-empty --allow-empty-message --date=$(date -Iseconds) --message \"" + escaped_message + "\"");
 }
 
 void git_commit_amend_include(const std::vector<std::string>& files) {
   git_capture("reset --soft HEAD~1");
-  git_capture("commit --allow-empty --allow-empty-message --date=$(date --iso-8601=seconds) --reuse-message ORIG_HEAD --only -- " + to_string(files));
+  git_capture("commit --allow-empty --allow-empty-message --date=$(date -Iseconds) --reuse-message ORIG_HEAD --only -- " + to_string(files));
 }
 
 void git_commit_amend_exclude(const std::vector<std::string>& files) {
