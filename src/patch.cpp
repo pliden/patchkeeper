@@ -80,10 +80,6 @@ void patch_load(const std::string& branch) {
   }
 }
 
-void patch_load() {
-  patch_load(git_branch());
-}
-
 void patch_store(const std::string& branch) {
   const auto dir = git_dir() + patchkeeper_dir;
   const auto file = dir + branch;
@@ -132,10 +128,6 @@ void patch_store(const std::string& branch) {
       fatal(file + ": could not remove file (" + std::strerror(err) + ")");
     }
   }
-}
-
-void patch_store() {
-  patch_store(git_branch());
 }
 
 std::deque<std::string>& patch_hidden() {

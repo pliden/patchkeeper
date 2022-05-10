@@ -22,10 +22,7 @@
 #include <string>
 
 void patch_load(const std::string& branch);
-void patch_load();
-
 void patch_store(const std::string& branch);
-void patch_store();
 
 std::deque<std::string>& patch_hidden();
 std::deque<std::string>& patch_popped();
