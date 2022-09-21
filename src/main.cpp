@@ -1517,11 +1517,32 @@ int main(int argc, char** argv) {
       pk_refresh_author();
     } else if (opt({"-e|--edit"})) {
       pk_refresh_edit();
-    } else if (opt({"-m|--message", "<message>"})) {
+    }
+  }
+
+  //
+  // message
+  //
+  else if (opt_cmd("message, m", "Set commit message")) {
+    if (opt({"<message>"})) {
       pk_refresh_message(opt_value(0));
-    } else if (opt({"-i|--include", "<files>..."})) {
+    }
+  }
+
+  //
+  // include
+  //
+  else if (opt_cmd("include, i", "Include file(s) in patch")) {
+    if (opt({"<files>..."})) {
       pk_refresh_include(opt_variadic());
-    } else if (opt({"-x|--exclude", "<files>..."})) {
+    }
+  }
+
+  //
+  // exclude
+  //
+  else if (opt_cmd("exclude, x", "Exclude file(s) from patch")) {
+    if (opt({"<files>..."})) {
       pk_refresh_exclude(opt_variadic());
     }
   }
