@@ -469,6 +469,24 @@ static void pk_new(const std::string& message) {
 //
 // delete
 //
+static void pk_delete_inner(const std::string& branch, const std::string& vref) {
+  const auto &ref = git_ref(vref);
+
+  if (patch_find(patch_pushed(), ref)) {
+    fatal("cannot delete pushed patch");
+  }
+
+  if (!patch_remove(patch_hidden(), ref) &&
+      !patch_remove(patch_popped(), ref)) {
+    fatal("unknown patch");
+  }
+
+  git_unanchor_ref(git_branch(), ref);
+  patch_store(branch);
+
+  git_print_ref("deleted", ref);
+}
+
 static void pk_delete(const std::vector<std::string>& vrefs) {
   git_repository();
 
@@ -476,20 +494,22 @@ static void pk_delete(const std::vector<std::string>& vrefs) {
   patch_load(branch);
 
   for (const auto& vref: vrefs) {
-    const auto& ref = git_ref(vref);
-
-    if (patch_find(patch_pushed(), ref)) {
-      fatal("cannot delete pushed patch");
-    }
-
-    if (!patch_remove(patch_hidden(), ref) &&
-        !patch_remove(patch_popped(), ref)) {
-      fatal("unknown patch");
-    }
-
-    git_unanchor_ref(git_branch(), ref);
-    patch_store(branch);
+    pk_delete_inner(branch, vref);
   }
+}
+
+static void pk_delete() {
+  git_repository();
+
+  const auto& branch = git_branch();
+  patch_load(branch);
+
+  if (patch_popped().empty()) {
+    fatal("nothing to delete");
+  }
+
+  const auto ref = patch_popped().back();
+  pk_delete_inner(branch, ref);
 }
 
 //
@@ -1504,6 +1524,8 @@ int main(int argc, char** argv) {
   else if (opt_cmd("delete, del", "Delete patch")) {
     if (opt({"<ref>..."})) {
       pk_delete(opt_variadic());
+    } else if (opt({"-n"})) {
+      pk_delete();
     }
   }
 
