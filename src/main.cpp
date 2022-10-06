@@ -1327,17 +1327,17 @@ int main(int argc, char** argv) {
   //
   else if (opt_cmd("pull", "Pull incoming changes")) {
     if (opt({})) {
-      pk_pull(false /* update */);
-    } else if (opt({"<remote>"})) {
-      pk_pull(opt_value(0), false /* update */);
-    } else if (opt({"<remote>", "<branch>"})) {
-      pk_pull(opt_value(0), opt_value(1), false /* update */);
-    } else if (opt({"-u|--update"})) {
       pk_pull(true /* update */);
-    } else if (opt({"-u|--update", "<remote>"})) {
+    } else if (opt({"<remote>"})) {
       pk_pull(opt_value(0), true /* update */);
-    } else if (opt({"-u|--update", "<remote>", "<branch>"})) {
+    } else if (opt({"<remote>", "<branch>"})) {
       pk_pull(opt_value(0), opt_value(1), true /* update */);
+    } else if (opt({"-n|--no-update"})) {
+      pk_pull(false /* update */);
+    } else if (opt({"-n|--no-update", "<remote>"})) {
+      pk_pull(opt_value(0), false /* update */);
+    } else if (opt({"-n|--no-update", "<remote>", "<branch>"})) {
+      pk_pull(opt_value(0), opt_value(1), false /* update */);
     }
   }
 
