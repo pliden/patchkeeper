@@ -74,6 +74,8 @@ void git_log();
 void git_log(const std::vector<std::string>& paths);
 void git_log_verbose();
 void git_log_verbose(const std::vector<std::string>& paths);
+void git_log_all();
+void git_log_all_verbose();
 void git_log_list();
 void git_log_list(const std::vector<std::string>& paths);
 void git_log_refs(const std::string& refs);

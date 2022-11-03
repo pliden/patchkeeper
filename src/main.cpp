@@ -270,6 +270,16 @@ static void pk_log_verbose(const std::vector<std::string>& paths) {
   git_log_verbose(paths);
 }
 
+static void pk_log_all() {
+  git_repository();
+  git_log_all();
+}
+
+static void pk_log_all_verbose() {
+  git_repository();
+  git_log_all_verbose();
+}
+
 static void pk_log_list() {
   git_repository();
   git_log_list();
@@ -1407,6 +1417,10 @@ int main(int argc, char** argv) {
       pk_log_verbose();
     } else if (opt({"-v|--verbose", "<path>..."})) {
       pk_log_verbose(opt_variadic());
+    } else if (opt({"-a|--all"})) {
+      pk_log_all();
+    } else if (opt({"-a|--all", "-v|--verbose"})) {
+      pk_log_all_verbose();
     } else if (opt({"-l|--list"})) {
       pk_log_list();
     } else if (opt({"-l|--list", "<path>..."})) {

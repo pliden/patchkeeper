@@ -253,19 +253,27 @@ void git_status() {
 }
 
 void git_log() {
-  git_no_capture("log --graph --branches --remotes " GIT_FORMAT_NORMAL);
+  git_no_capture("log --graph --branches " GIT_FORMAT_NORMAL);
 }
 
 void git_log(const std::vector<std::string>& paths) {
-  git_no_capture("log --graph --branches --remotes " GIT_FORMAT_NORMAL " -- " + to_string(paths));
+  git_no_capture("log --graph --branches " GIT_FORMAT_NORMAL " -- " + to_string(paths));
 }
 
 void git_log_verbose() {
-  git_no_capture("log --graph --branches --remotes " GIT_FORMAT_LONG);
+  git_no_capture("log --graph --branches " GIT_FORMAT_LONG);
 }
 
 void git_log_verbose(const std::vector<std::string>& paths) {
-  git_no_capture("log --graph --branches --remotes " GIT_FORMAT_LONG " -- " + to_string(paths));
+  git_no_capture("log --graph --branches " GIT_FORMAT_LONG " -- " + to_string(paths));
+}
+
+void git_log_all() {
+  git_no_capture("log --graph --branches --remotes " GIT_FORMAT_NORMAL);
+}
+
+void git_log_all_verbose() {
+  git_no_capture("log --graph --branches --remotes " GIT_FORMAT_LONG);
 }
 
 void git_log_list() {
