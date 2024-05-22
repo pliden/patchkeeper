@@ -188,7 +188,7 @@ static void pk_pull(const std::string& remote, const std::string& branch, bool u
 static void pk_publish_inner(const std::string& remote, const std::string& branch, bool force) {
   patch_load(branch);
 
-  if (!patch_pushed().empty()) {
+  if (!force && !patch_pushed().empty()) {
     fatal("cannot have pushed patches");
   }
 
