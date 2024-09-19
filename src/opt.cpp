@@ -128,7 +128,7 @@ const std::vector<std::string>& opt_variadic() {
   return variadic;
 }
 
-int opt_exit() {
+int opt_exit(bool help) {
   if (!usage_options.empty()) {
     const std::string commands = usage_commands.back().commands;
     const std::string first_command = commands.substr(0, commands.find(", "));
@@ -145,21 +145,24 @@ int opt_exit() {
 
     return EXIT_FAILURE;
   } else if (!usage_commands.empty()) {
-    std::cout << "usage: pk [options] <command> [command options]\n";
-    std::cout << "\noptions:\n";
-    for (const auto& options: usage_pre_options) {
-      std::cout << "  ";
-      for (const auto& option: options) {
-        std::cout << " " << option;
+    if (help) {
+      std::cout << "usage: pk [options] <command> [command options]\n";
+      std::cout << "\noptions:\n";
+      for (const auto& options: usage_pre_options) {
+        std::cout << "  ";
+        for (const auto& option: options) {
+          std::cout << " " << option;
+        }
+        std::cout << "\n";
+      }
+      std::cout << "\ncommands:\n";
+      for (const auto& command: usage_commands) {
+        std::cout << "   " << std::left << std::setw(23) << command.commands << command.description << "\n";
       }
       std::cout << "\n";
+    } else {
+      std::cout << "error: invalid option or command\n";
     }
-    std::cout << "\ncommands:\n";
-    for (const auto& command: usage_commands) {
-      std::cout << "   " << std::left << std::setw(23) << command.commands << command.description << "\n";
-    }
-    std::cout << "\n";
-
     return EXIT_FAILURE;
   }
 

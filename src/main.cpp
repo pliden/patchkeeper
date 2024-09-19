@@ -1262,6 +1262,8 @@ static void pk_version() {
 // main
 //
 int main(int argc, char** argv) {
+  bool help = false;
+
   opt_init(argc, argv);
 
   for (;;) {
@@ -1269,6 +1271,8 @@ int main(int argc, char** argv) {
       change_directory(opt_value(0));
     } else if (opt_pre({"-d|--debug"})) {
       debug = true;
+    } else if (opt_pre({"-h|--help"})) {
+      help = true;
     } else {
       break;
     }
@@ -1823,7 +1827,7 @@ int main(int argc, char** argv) {
   // prequest/pullreq/pr
   // github/gh -pr
 
-  return opt_exit();
+  return opt_exit(help);
 }
 
 /* End of file */

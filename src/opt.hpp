@@ -28,6 +28,6 @@ bool opt_cmd(const char* commands, const char* description);
 bool opt(const std::initializer_list<const char*> options);
 const std::string& opt_value(size_t i);
 const std::vector<std::string>& opt_variadic();
-int opt_exit();
+int opt_exit(bool help);
 
 /* End of file */
