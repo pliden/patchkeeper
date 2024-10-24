@@ -16,7 +16,7 @@
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-VERSION := 1.0
+VERSION := 1.1
 
 DESTDIR ?=
 BINDIR  ?= /usr/bin
