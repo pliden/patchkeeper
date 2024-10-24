@@ -40,13 +40,28 @@ static std::deque<std::string> hidden;
 static std::deque<std::string> popped;
 static std::deque<std::string> pushed;
 
+static std::string
+filename(const std::string& branch) {
+  auto from = std::string("/");
+  auto to = std::string("_slash_");
+  auto name = branch;
+
+  size_t pos = 0;
+  while ((pos = name.find(from, pos)) != std::string::npos) {
+         name.replace(pos, from.length(), to);
+         pos += to.length();
+    }
+
+    return name;
+}
+
 void patch_load(const std::string& branch) {
   hidden.clear();
   popped.clear();
   pushed.clear();
 
   const auto dir = git_dir() + patchkeeper_dir;
-  const auto file = dir + branch;
+  const auto file = dir + filename(branch);
   std::ifstream in(file);
 
   if (!in) {
@@ -82,7 +97,7 @@ void patch_load(const std::string& branch) {
 
 void patch_store(const std::string& branch) {
   const auto dir = git_dir() + patchkeeper_dir;
-  const auto file = dir + branch;
+  const auto file = dir + filename(branch);
   const auto file_tmp = file + ".tmp";
 
   if (::mkdir(dir.c_str(), S_IRWXU|S_IRWXG|S_IROTH|S_IXOTH) == -1 && errno != EEXIST) {
