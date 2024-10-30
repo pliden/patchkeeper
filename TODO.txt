@@ -20,6 +20,7 @@ DONE
    fold                   Fold patch
 
 PRIO 1
+   test for fold
    add, a                 Add file(s)
    remove, rm             Remove file(s)
    move, mv               Move or rename file(s)

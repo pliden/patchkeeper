@@ -38,15 +38,16 @@ fn resolve(repo: &Repository, paths: Option<&Vec<String>>) -> Result<()> {
         _ => &conflicts,
     };
 
-    if paths.is_empty() {
+    let unresolved_paths = paths
+        .iter()
+        .filter(|path| conflicts.contains(path))
+        .collect::<Vec<_>>();
+
+    if unresolved_paths.is_empty() {
         bail!("nothing to resolve");
     }
 
-    for path in paths {
-        if !conflicts.contains(path) {
-            bail!("no merge conflict(s) in file: {path}");
-        }
-
+    for path in unresolved_paths {
         safe_println!("resolved: {}", path.bold().green());
         index.add_path(Path::new(&path))?;
     }
