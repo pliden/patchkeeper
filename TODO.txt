@@ -1,0 +1,63 @@
+DONE
+   init                   Initialize repository
+   show, s                Show change
+   resolve, res           Resolve merge conflicts
+   new, n                 Create patch
+   delete, del            Delete patch
+   refresh, ref, r        Refresh patch
+   push, pu               Push patch(es)
+   pop, po                Pop patch(es)
+   hide, hi               Hide patch(es)
+   list, ls, l            List patches
+   finalize, fin          Finalize patch(es)
+   bset, bs, b            Set branch
+   bnew, bn               Create branch
+   bdelete, bdel, bd      Delete branch
+   brename, bren, br      Rename branch
+   blist, bls, bl         List branches
+   version                Show version
+   reset                  Reset current head
+   fold                   Fold patch
+
+PRIO 1
+   add, a                 Add file(s)
+   remove, rm             Remove file(s)
+   move, mv               Move or rename file(s)
+
+PRIO 2
+   revert                 Revert changes to file(s)
+   float/pop --float
+   split -i / exclude -i
+   include, i             Include file(s) in patch
+   exclude, x             Exclude file(s) from patch
+   message, m             Set commit message
+   diff, d                Show patch
+   udiff, u               Show unrefreshed
+
+PRIO 3
+   merge                  Merge changes
+   rebase                 Rebase branch
+   bprune, bp             Prune branches
+   clone                  Clone repository
+   incoming, in           List incoming changes
+   outgoing, out          List outgoing changes
+   pull                   Pull incoming changes
+   publish                Push outgoing changes
+   status, st             Show status
+   log, lo                List changes
+   blame                  Blame changes
+   head                   Show current head
+   clean                  Delete untracked files
+
+PRIO 4
+   snapshot, snap <msg>   Snapshot current state
+      -r <revspec>        Restore snapshot
+      -d <revspec>        Delete snapshot
+   config, c              Get/Set configuration options
+   rnew, rn               Create remote
+   rdelete, rdel, rd      Delete remote
+   rrename, rren, rr      Rename remote
+   rlist, rls, rl         List remotes
+
+WILL NOT DO
+   edit, e                Edit patched file(s)

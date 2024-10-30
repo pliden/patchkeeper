@@ -1,0 +1,142 @@
+#
+# Test helper functions
+#
+
+_stdin_foreach_line() {
+    [ "$*" ] || false
+    while read; do
+        $* "$REPLY"
+    done
+}
+
+_git_revspec_to_oid() {
+    [ "$1" ] || false
+    git rev-list --max-count=1 "$1"
+}
+
+_git_current_branch() {
+    [ "$1" ] || false
+    git branch --show-current
+}
+
+_git_show() {
+    [ "$1" ] && [ "$2" ] || false
+    git show --format=tformat:"$1" "$2"
+}
+
+HEAD() {
+    _git_revspec_to_oid HEAD
+}
+
+metadata() {
+    _git_show '%s%n%b' refs/patchkeeper_0
+}
+
+assert() {
+    test "$@"
+}
+
+fail() {
+    ! "$@" 2>&1
+}
+
+usage() {
+    grep "^Usage: pk $1 "
+}
+
+count() {
+    [ ! "$1" ] || false
+    wc -l
+}
+
+top() {
+    if [ "$1" ]; then
+        head -n $1
+    else
+        head -n 1
+    fi
+}
+
+bottom() {
+    if [ "$1" ]; then
+        tail -n $1
+    else
+        tail -n 1
+    fi
+}
+
+after() {
+    [ "$1" ] || false
+    cut -f2 -d "$1"
+}
+
+property() {
+    [ "$1" ] || false
+    grep "^%$1 " | after ' '
+}
+
+branch() {
+    [ "$1" ] || false
+    grep "@%$1 " | after ' '
+}
+
+revision() {
+    property revision
+}
+
+undo() {
+    property undo
+}
+
+_current_branch() {
+    [ ! "$1" ] || false
+    local BRANCH=$(_git_current_branch)
+    local FOUND="Yes"
+    while read; do
+        if [ "$REPLY" = "@$BRANCH" ]; then
+            FOUND="Yes"
+        elif [ "$REPLY" = "" ]; then
+            FOUND="No"
+        elif [ "$FOUND" = "Yes" ]; then
+            echo "$REPLY"
+        fi
+    done
+}
+
+hidden() {
+    _current_branch | grep '^#[0-9a-f]*$' | after '#'
+}
+
+popped() {
+    _current_branch | grep '^-[0-9a-f]*$' | after '-'
+}
+
+pushed() {
+    _current_branch | grep '^+[0-9a-f]*$' | after '+'
+}
+
+summary() {
+    _stdin_foreach_line _git_show '%s'
+}
+
+body() {
+    _stdin_foreach_line _git_show '%b'
+}
+
+author_name() {
+    _stdin_foreach_line _git_show '%an'
+}
+
+comitter_name() {
+    _stdin_foreach_line _git_show '%cn'
+}
+
+author_time() {
+    _stdin_foreach_line _git_show '%ai'
+}
+
+comitter_time() {
+    _stdin_foreach_line _git_show '%ci'
+}
+
+# End of file

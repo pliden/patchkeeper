@@ -1,0 +1,17 @@
+[package]
+name = "pk"
+version = "2.0.0"
+edition = "2021"
+authors = ["Per Liden <per@malloc.se>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.86"
+chrono = "0.4.38"
+colored = "2.1.0"
+crossterm = "0.28.1"
+git2 = "0.18.3"
+gumdrop = "0.8"
+itertools = "0.13.0"
+ratatui = "0.28.1"
