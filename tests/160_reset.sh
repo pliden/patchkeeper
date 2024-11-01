@@ -6,6 +6,9 @@ pk init
 pk new INITIAL
 pk finalize
 
+fail pk reset | grep "error: missing required free argument"
+fail pk reset INVALID | grep "error: revspec 'INVALID' not found"
+
 pk bnew branch0
 pk new A
 
@@ -14,8 +17,5 @@ assert $(HEAD | summary) == INITIAL
 
 pk reset branch0
 assert $(HEAD | summary) == A
-
-fail pk reset | grep "error: missing required free argument"
-fail pk reset INVALID | grep "error: revspec 'INVALID' not found"
 
 # End of file

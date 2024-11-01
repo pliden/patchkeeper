@@ -70,7 +70,10 @@ fn fold_next(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::conflicting_options(&[("-n", args.next), ("<revspec>", !args.revspecs.is_empty())])?;
+    cmd::missing_or_conflicting_options(&[
+        ("-n", args.next),
+        ("<revspec>", !args.revspecs.is_empty()),
+    ])?;
 
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;

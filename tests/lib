@@ -21,7 +21,7 @@ _git_current_branch() {
 
 _git_show() {
     [ "$1" ] && [ "$2" ] || false
-    git show --format=tformat:"$1" "$2"
+    git show --no-patch --format=tformat:"$1" "$2"
 }
 
 HEAD() {
