@@ -28,6 +28,11 @@ HEAD() {
     _git_revspec_to_oid HEAD
 }
 
+INDEX() {
+    [ ! "$1" ] || false
+    git ls-files
+}
+
 metadata() {
     _git_show '%s%n%b' refs/patchkeeper_0
 }
@@ -41,6 +46,7 @@ fail() {
 }
 
 usage() {
+    [ "$1" ] || false
     grep "^Usage: pk $1 "
 }
 

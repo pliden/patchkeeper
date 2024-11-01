@@ -8,6 +8,7 @@ use itertools::Itertools;
 use std::env;
 use std::path::PathBuf;
 
+mod add;
 mod bdelete;
 mod bhide;
 mod blist;
@@ -25,6 +26,7 @@ mod new;
 mod pop;
 mod push;
 mod refresh;
+mod remove;
 mod reset;
 mod resolve;
 mod show;
@@ -90,6 +92,14 @@ enum Cmd {
     #[options(help = "Finalize commit(s)")]
     Finalize(finalize::Args),
     Fin(finalize::Args),
+
+    #[options(help = "Add file(s)")]
+    Add(add::Args),
+    A(add::Args),
+
+    #[options(help = "Remove file(s)")]
+    Remove(remove::Args),
+    Rm(remove::Args),
 
     #[options(help = "Push commit")]
     Push(push::Args),
@@ -303,6 +313,8 @@ pub fn main() -> Result<()> {
         Cmd::Delete(args) | Cmd::Del(args) => delete::main(&path, args),
         Cmd::Refresh(args) | Cmd::R(args) => refresh::main(&path, args),
         Cmd::Finalize(args) | Cmd::Fin(args) => finalize::main(&path, args),
+        Cmd::Add(args) | Cmd::A(args) => add::main(&path, args),
+        Cmd::Remove(args) | Cmd::Rm(args) => remove::main(&path, args),
         Cmd::Push(args) | Cmd::Pu(args) => push::main(&path, args),
         Cmd::Pop(args) | Cmd::Po(args) => pop::main(&path, args),
         Cmd::Fold(args) => fold::main(&path, args),

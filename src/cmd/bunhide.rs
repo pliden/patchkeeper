@@ -1,4 +1,3 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::meta::HIDDEN;
 use crate::print;
@@ -14,7 +13,7 @@ pub struct Args {
     #[options(help = "Print help message")]
     help: bool,
 
-    #[options(free, help = "[<branch>...]")]
+    #[options(free, required, help = "[<branch>...]")]
     names: Vec<String>,
 }
 
@@ -39,8 +38,6 @@ fn unhide(repo: &Repository, meta: &Metadata, names: &[String]) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::missing_option(&[("<branch>", !args.names.is_empty())])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 

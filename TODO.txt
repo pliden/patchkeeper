@@ -18,10 +18,11 @@ DONE
    version                Show version
    reset                  Reset current head
    fold                   Fold patch
-
-PRIO 1
    add, a                 Add file(s)
    remove, rm             Remove file(s)
+
+PRIO 1
+   test add/remove
    move, mv               Move or rename file(s)
 
 PRIO 2
