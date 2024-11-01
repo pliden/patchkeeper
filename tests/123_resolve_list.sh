@@ -8,7 +8,7 @@ pk new A
 echo "VERSION A0" > file0
 echo "VERSION A1" > file1
 echo "VERSION A2" > file2
-git add file0 file1 file2
+pk add file0 file1 file2
 pk refresh
 
 pk resolve -l | grep "no merge conflicts"

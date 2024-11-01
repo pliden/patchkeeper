@@ -8,7 +8,7 @@ fail pk refresh | grep "error: nothing to refresh"
 
 pk new A
 echo "VERSION A" > file0
-git add file0
+pk add file0
 pk refresh
 
 pk new B

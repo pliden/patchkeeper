@@ -10,17 +10,17 @@ fail pk fold INVALID | grep "error: revspec 'INVALID' not found"
 
 pk new A
 echo A > fileA
-git add fileA
+pk add fileA
 pk refresh
 
 pk new B
 echo B > fileB
-git add fileB
+pk add fileB
 pk refresh
 
 pk new C
 echo C > fileC
-git add fileC
+pk add fileC
 pk refresh
 
 grep A fileA

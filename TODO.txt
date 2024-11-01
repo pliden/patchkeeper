@@ -22,7 +22,7 @@ DONE
    remove, rm             Remove file(s)
 
 PRIO 1
-   test add/remove
+   test remove
    move, mv               Move or rename file(s)
 
 PRIO 2
