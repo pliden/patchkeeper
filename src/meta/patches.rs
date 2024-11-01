@@ -47,11 +47,6 @@ impl Patches {
         patches.front().copied().unwrap()
     }
 
-    pub fn bottom(&self) -> Oid {
-        let Patches(patches) = self;
-        patches.back().copied().unwrap()
-    }
-
     pub fn top_as_vec(&self) -> Vec<Oid> {
         let Patches(patches) = self;
         patches.front().copied().iter().copied().collect::<Vec<_>>()

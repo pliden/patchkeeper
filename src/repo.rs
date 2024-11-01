@@ -12,7 +12,9 @@ use git2::Repository;
 use git2::RepositoryInitOptions;
 use git2::ResetType;
 use git2::Time;
+use std::io::ErrorKind;
 use std::path::Path;
+use std::path::PathBuf;
 
 pub const HEAD: &str = "HEAD";
 
@@ -24,6 +26,8 @@ pub trait RepositoryUtils {
     fn initialize(path: &Path) -> Result<Repository>;
     fn ensure_no_unrefreshed(&self) -> Result<()>;
     fn ensure_no_unresolved(&self) -> Result<()>;
+    fn path_relative_to_workdir(&self, path: &str) -> Result<PathBuf>;
+    fn paths_relative_to_workdir(&self, paths: &[String]) -> Result<Vec<String>>;
     fn head_name(&self) -> Result<String>;
     fn find_commits(&self, oids: &[Oid]) -> Result<Vec<Commit>>;
     fn find_commit_by_revspec(&self, revspec: &str) -> Result<Commit>;
@@ -65,6 +69,38 @@ impl RepositoryUtils for Repository {
         }
 
         Ok(())
+    }
+
+    fn path_relative_to_workdir(&self, path: &str) -> Result<PathBuf> {
+        let workdir = match self.workdir() {
+            Some(path) => PathBuf::from(path).canonicalize()?,
+            _ => bail!("repository has no work directory"),
+        };
+
+        let absolute_path = match PathBuf::from(path).canonicalize() {
+            Ok(path) => path,
+            Err(error) if error.kind() == ErrorKind::NotFound => {
+                bail!("file not found: {path}")
+            }
+            Err(error) => bail!(error),
+        };
+        let relative_path = match absolute_path.strip_prefix(workdir) {
+            Ok(path) => path.to_path_buf(),
+            _ => bail!("file is not in repository work directory: {path}"),
+        };
+
+        Ok(relative_path)
+    }
+
+    fn paths_relative_to_workdir(&self, paths: &[String]) -> Result<Vec<String>> {
+        let mut relative_paths = vec![];
+
+        for path in paths {
+            let relative_path = self.path_relative_to_workdir(path)?;
+            relative_paths.push(relative_path.to_str().unwrap().to_string());
+        }
+
+        Ok(relative_paths)
     }
 
     fn head_name(&self) -> Result<String> {

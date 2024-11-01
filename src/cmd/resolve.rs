@@ -6,7 +6,6 @@ use crate::repo::RepositoryUtils;
 use crate::safe_println;
 use anyhow::bail;
 use anyhow::Result;
-use colored::Colorize;
 use git2::Repository;
 use gumdrop::Options;
 use std::path::Path;
@@ -33,22 +32,25 @@ pub struct Args {
 fn resolve(repo: &Repository, paths: Option<&Vec<String>>) -> Result<()> {
     let mut index = repo.index()?;
     let conflicts = index.unresolved_conflicts()?;
-    let paths = match paths {
-        Some(paths) => paths,
-        _ => &conflicts,
-    };
 
-    let unresolved_paths = paths
-        .iter()
-        .filter(|path| conflicts.contains(path))
-        .collect::<Vec<_>>();
-
-    if unresolved_paths.is_empty() {
+    if conflicts.is_empty() {
         bail!("nothing to resolve");
     }
 
+    let relative_paths = match paths {
+        Some(paths) => Some(repo.paths_relative_to_workdir(paths)?),
+        _ => None,
+    };
+
+    let unresolved_paths = match relative_paths {
+        Some(paths) => paths
+            .into_iter()
+            .filter(|path| conflicts.contains(path))
+            .collect::<Vec<_>>(),
+        _ => conflicts,
+    };
+
     for path in unresolved_paths {
-        safe_println!("resolved: {}", path.bold().green());
         index.add_path(Path::new(&path))?;
     }
 
