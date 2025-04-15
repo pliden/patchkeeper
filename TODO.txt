@@ -1,0 +1,28 @@
+PRIO 1
+   diff, d                Show patch
+   udiff, u               Show unrefreshed
+
+PRIO 2
+   merge                  Merge changes
+   rebase                 Rebase branch
+   bprune, bp             Prune branches
+   incoming, in           List incoming changes
+   outgoing, out          List outgoing changes
+   pull                   Pull incoming changes
+   publish                Push outgoing changes
+   status, st             Show status
+   log, lo                List changes
+   blame                  Blame changes
+   head                   Show current head
+   clean                  Delete untracked files
+
+PRIO 3
+   revert                 Revert changes to file(s)
+   split -i               Include/exclude hunks from file(s)
+   float/pop --float
+
+   config, c              Get/Set configuration options
+   rnew, rn               Create remote
+   rdelete, rdel, rd      Delete remote
+   rrename, rren, rr      Rename remote
+   rlist, rls, rl         List remotes

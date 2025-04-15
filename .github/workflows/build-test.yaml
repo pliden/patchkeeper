@@ -1,0 +1,31 @@
+name: Build & Test
+run-name: Build & Test
+
+on:
+  pull_request:
+    branches:
+      - v2
+  push:
+    branches:
+      - v2
+
+env:
+  # Disable incremental compilation for faster from-scratch builds
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  build-and-test-linux:
+    name: Build & Test Linux
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: rustup update
+    - run: ./test.sh -v
+
+  build-and-test-macos:
+    name: Build & Test macOS
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: rustup update
+    - run: ./test.sh -v
