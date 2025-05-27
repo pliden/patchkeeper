@@ -1,10 +1,6 @@
-use crate::stdout;
 use anyhow::anyhow;
-use anyhow::bail;
 use anyhow::Result;
-use gumdrop::Options;
-use gumdrop::ParsingStyle;
-use itertools::Itertools;
+use cmdline::CmdLine;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -40,339 +36,169 @@ mod show;
 mod unhide;
 mod version;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 struct Args {
-    #[options(meta = "<path>", help = "Path to repository")]
+    #[cmdline(meta = "path", help = "Path to repository")]
     repo: Option<PathBuf>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(command, required)]
-    command: Option<Cmd>,
+    #[cmdline(positional, variants = "commands")]
+    command: Command,
 }
 
-#[derive(Options)]
-enum Cmd {
-    #[options(help = "Initialize repository")]
+#[derive(CmdLine)]
+enum Command {
+    #[cmdline(help = "Initialize repository")]
     Init(init::Args),
 
-    #[options(help = "Clone repository")]
+    #[cmdline(help = "Clone repository")]
     Clone(clone::Args),
 
-    #[options(help = "Fetch remote commit(s)")]
+    #[cmdline(help = "Fetch remote commit(s)")]
     Fetch(fetch::Args),
 
-    #[options(help = "Pull remote commit(s)")]
+    #[cmdline(help = "Pull remote commit(s)")]
     Pull(fetch::Args),
 
-    #[options(help = "New branch")]
+    #[cmdline(alias = "bn", help = "New branch")]
     Bnew(bnew::Args),
-    Bn(bnew::Args),
 
-    #[options(help = "Set branch")]
+    #[cmdline(alias = "b", help = "Set branch")]
     Bset(bset::Args),
-    B(bset::Args),
 
-    #[options(help = "Rename branch")]
+    #[cmdline(alias = "br", help = "Rename branch")]
     Brename(brename::Args),
-    Br(brename::Args),
 
-    #[options(help = "Delete branch")]
+    #[cmdline(alias = "bd", help = "Delete branch")]
     Bdelete(bdelete::Args),
-    Bd(bdelete::Args),
 
-    #[options(help = "List branches")]
+    #[cmdline(alias = "bls", alias = "bl", help = "List branches")]
     Blist(blist::Args),
-    Bls(blist::Args),
-    Bl(blist::Args),
 
-    #[options(help = "Hide branch")]
+    #[cmdline(help = "Hide branch")]
     Bhide(bhide::Args),
 
-    #[options(help = "Unhide branch")]
+    #[cmdline(help = "Unhide branch")]
     Bunhide(bunhide::Args),
 
-    #[options(help = "New commit")]
+    #[cmdline(alias = "n", help = "New commit")]
     New(new::Args),
-    N(new::Args),
 
-    #[options(help = "Delete commit")]
+    #[cmdline(alias = "del", help = "Delete commit")]
     Delete(delete::Args),
-    Del(delete::Args),
 
-    #[options(help = "Refresh commit")]
+    #[cmdline(alias = "r", help = "Refresh commit")]
     Refresh(refresh::Args),
-    R(refresh::Args),
 
-    #[options(help = "Set commit message")]
+    #[cmdline(alias = "msg", alias = "m", help = "Set commit message")]
     Message(message::Args),
-    Msg(message::Args),
-    M(message::Args),
 
-    #[options(help = "Finalize commit(s)")]
+    #[cmdline(alias = "fin", help = "Finalize commit(s)")]
     Finalize(finalize::Args),
-    Fin(finalize::Args),
 
-    #[options(help = "Add file(s)")]
+    #[cmdline(alias = "a", help = "Add file(s)")]
     Add(add::Args),
-    A(add::Args),
 
-    #[options(help = "Remove file(s)")]
+    #[cmdline(alias = "rm", help = "Remove file(s)")]
     Remove(remove::Args),
-    Rm(remove::Args),
 
-    #[options(help = "Move file(s)")]
+    #[cmdline(alias = "mv", help = "Move file(s)")]
     Move(move_::Args),
-    Mv(move_::Args),
 
-    #[options(help = "Include file(s) in commit")]
+    #[cmdline(alias = "i", help = "Include file(s) in commit")]
     Include(include::Args),
-    I(include::Args),
 
-    #[options(help = "Exclude file(s) from commit")]
+    #[cmdline(alias = "x", help = "Exclude file(s) from commit")]
     Exclude(exclude::Args),
-    X(exclude::Args),
 
-    #[options(help = "Push commit")]
+    #[cmdline(alias = "pu", help = "Push commit")]
     Push(push::Args),
-    Pu(push::Args),
 
-    #[options(help = "Pop commit")]
+    #[cmdline(alias = "po", help = "Pop commit")]
     Pop(pop::Args),
-    Po(pop::Args),
 
-    #[options(help = "Fold commit")]
+    #[cmdline(help = "Fold commit")]
     Fold(fold::Args),
 
-    #[options(help = "Hide commit")]
+    #[cmdline(help = "Hide commit")]
     Hide(hide::Args),
 
-    #[options(help = "Unhide commit")]
+    #[cmdline(help = "Unhide commit")]
     Unhide(unhide::Args),
 
-    #[options(help = "List commits")]
+    #[cmdline(alias = "ls", alias = "l", help = "List commits")]
     List(list::Args),
-    Ls(list::Args),
-    L(list::Args),
 
-    #[options(help = "Resolve merge conflict")]
+    #[cmdline(alias = "res", help = "Resolve merge conflict")]
     Resolve(resolve::Args),
-    Res(resolve::Args),
 
-    #[options(help = "Reset head")]
+    #[cmdline(help = "Reset head")]
     Reset(reset::Args),
 
-    #[options(help = "Show commit")]
+    #[cmdline(alias = "s", help = "Show commit")]
     Show(show::Args),
-    S(show::Args),
 
-    #[options(help = "Show version")]
+    #[cmdline(help = "Show version")]
     Version(version::Args),
-}
-
-fn parse_args() -> Result<Args> {
-    let args = env::args().collect::<Vec<_>>();
-    Ok(Args::parse_args(&args[1..], ParsingStyle::default())?)
-}
-
-fn print_usage(args: Args) -> Result<()> {
-    fn format_cmd_list(command_list: &str) -> Vec<(String, String)> {
-        let mut names_and_help: Vec<(String, String)> = vec![];
-
-        for line in command_list.lines() {
-            let name_or_alias = line.split_whitespace().next().unwrap().to_string();
-            let help = line.split_whitespace().skip(1).join(" ");
-            if help.is_empty() {
-                let (mut names, help) = names_and_help.pop().unwrap();
-                names.push_str(", ");
-                names.push_str(name_or_alias.as_str());
-                names_and_help.push((names, help));
-            } else {
-                names_and_help.push((name_or_alias, help));
-            }
-        }
-
-        names_and_help
-    }
-
-    fn format_options(usage: &str) -> Vec<(String, String)> {
-        let mut opts: Vec<(String, String)> = vec![];
-
-        let mut found = false;
-        for line in usage.lines() {
-            if !found {
-                found = line == "Optional arguments:";
-                continue;
-            }
-
-            let mut option: Vec<String> = vec![];
-            let mut help: Vec<String> = vec![];
-
-            for word in line.split_whitespace() {
-                if word.chars().next().unwrap().is_alphabetic() {
-                    help.push(word.to_string());
-                } else {
-                    option.push(word.to_string());
-                }
-            }
-
-            opts.push((option.join(" "), help.join(" ")));
-        }
-
-        opts
-    }
-
-    fn format_arguments(usage: &str) -> String {
-        let mut args: Vec<String> = vec![];
-
-        let mut found = false;
-        for line in usage.lines() {
-            if !found {
-                found = line == "Positional arguments:";
-                continue;
-            }
-
-            if line == "Optional arguments:" {
-                break;
-            }
-
-            let arg = line.split_whitespace().skip(1).join(" ");
-            args.push(arg);
-        }
-
-        args.join(" ")
-    }
-
-    let width = 23;
-
-    if let Some(cmd_list) = args.self_command_list() {
-        let cmds = format_cmd_list(cmd_list);
-        let opts = format_options(args.self_usage());
-
-        stdout!("Usage: pk [options] <command> [command options]\n");
-        stdout!("\n");
-        stdout!("Options:\n");
-        for (option, help) in opts {
-            stdout!("  {option:width$} {help}\n");
-        }
-        stdout!("\n");
-        stdout!("Commands:\n");
-        for (names, help) in cmds {
-            stdout!("  {names:width$} {help}\n");
-        }
-    } else if let Some(cmd) = args.command() {
-        let cmd_name = cmd.command_name().unwrap_or("?");
-        let cmd_args = format_arguments(cmd.self_usage());
-        let cmd_opts = format_options(cmd.self_usage());
-
-        if args.help {
-            bail!("unexpected argument `{cmd_name}`");
-        }
-
-        stdout!("Usage: pk {cmd_name} [options] {cmd_args}\n");
-        stdout!("\n");
-        stdout!("Options:\n");
-        for (option, help) in cmd_opts {
-            stdout!("  {option:width$} {help}\n");
-        }
-    }
-
-    stdout!("\n");
-    Ok(())
-}
-
-fn enabled_options<'a>(options: &[(&'a str, bool)]) -> Vec<&'a str> {
-    options
-        .iter()
-        .filter_map(|(name, enabled)| if *enabled { Some(*name) } else { None })
-        .collect::<Vec<_>>()
-}
-
-pub fn missing_option(options: &[(&str, bool)]) -> Result<()> {
-    let enabled = enabled_options(options);
-    if enabled.is_empty() {
-        let options = options.iter().map(|(name, _)| *name).join(" or ");
-        bail!("missing option: {options}");
-    }
-
-    Ok(())
-}
-
-pub fn conflicting_options(options: &[(&str, bool)]) -> Result<()> {
-    let enabled = enabled_options(options);
-    if enabled.len() > 1 {
-        let options = enabled.join(" and ");
-        bail!("conflicting options: {options}");
-    }
-
-    Ok(())
-}
-
-pub fn missing_or_conflicting_options(options: &[(&str, bool)]) -> Result<()> {
-    missing_option(options)?;
-    conflicting_options(options)
 }
 
 fn format_error(result: Result<()>) -> Result<()> {
     match result {
-        Err(error) if error.downcast_ref::<io::Error>().is_some() => {
-            let error = error.downcast_ref::<io::Error>().unwrap();
-            let message = format!("{}", error).to_lowercase();
-            let trimmed = message
-                .split_once(" (os error")
-                .map(|(first, _)| first)
-                .unwrap_or(&message);
-            Err(anyhow!(format!("{}", trimmed)))
-        }
-        Err(error) if error.downcast_ref::<git2::Error>().is_some() => {
-            let error = error.downcast_ref::<git2::Error>().unwrap();
-            Err(anyhow!(error.message().trim_end_matches('.').to_string()))
+        Err(error) => {
+            if let Some(error) = error.downcast_ref::<io::Error>() {
+                let message = error.to_string();
+                let trimmed = message
+                    .split_once(" (os error")
+                    .map(|(first, _)| first)
+                    .unwrap_or(&message)
+                    .to_lowercase();
+                Err(anyhow!(trimmed))
+            } else if let Some(error) = error.downcast_ref::<git2::Error>() {
+                let trimmed = error.message().trim_end_matches('.').to_string();
+                Err(anyhow!(trimmed))
+            } else {
+                Err(error)
+            }
         }
         _ => result,
     }
 }
 
 pub fn main() -> Result<()> {
-    let args = parse_args()?;
-    if args.help_requested() {
-        print_usage(args)?;
-        return Ok(());
-    }
+    let args = Args::from_env("pk");
 
     let path = args.repo.unwrap_or(env::current_dir()?);
 
-    format_error(match args.command.unwrap() {
-        Cmd::Init(args) => init::main(&path, args),
-        Cmd::Clone(args) => clone::main(&path, args),
-        Cmd::Fetch(args) => fetch::main(&path, args),
-        Cmd::Pull(args) => fetch::pull_main(&path, args),
-        Cmd::Bnew(args) | Cmd::Bn(args) => bnew::main(&path, args),
-        Cmd::Bset(args) | Cmd::B(args) => bset::main(&path, args),
-        Cmd::Brename(args) | Cmd::Br(args) => brename::main(&path, args),
-        Cmd::Bdelete(args) | Cmd::Bd(args) => bdelete::main(&path, args),
-        Cmd::Blist(args) | Cmd::Bls(args) | Cmd::Bl(args) => blist::main(&path, args),
-        Cmd::Bhide(args) => bhide::main(&path, args),
-        Cmd::Bunhide(args) => bunhide::main(&path, args),
-        Cmd::New(args) | Cmd::N(args) => new::main(&path, args),
-        Cmd::Delete(args) | Cmd::Del(args) => delete::main(&path, args),
-        Cmd::Refresh(args) | Cmd::R(args) => refresh::main(&path, args),
-        Cmd::Message(args) | Cmd::Msg(args) | Cmd::M(args) => message::main(&path, args),
-        Cmd::Finalize(args) | Cmd::Fin(args) => finalize::main(&path, args),
-        Cmd::Add(args) | Cmd::A(args) => add::main(&path, args),
-        Cmd::Remove(args) | Cmd::Rm(args) => remove::main(&path, args),
-        Cmd::Move(args) | Cmd::Mv(args) => move_::main(&path, args),
-        Cmd::Include(args) | Cmd::I(args) => include::main(&path, args),
-        Cmd::Exclude(args) | Cmd::X(args) => exclude::main(&path, args),
-        Cmd::Push(args) | Cmd::Pu(args) => push::main(&path, args),
-        Cmd::Pop(args) | Cmd::Po(args) => pop::main(&path, args),
-        Cmd::Fold(args) => fold::main(&path, args),
-        Cmd::Hide(args) => hide::main(&path, args),
-        Cmd::Unhide(args) => unhide::main(&path, args),
-        Cmd::List(args) | Cmd::Ls(args) | Cmd::L(args) => list::main(&path, args),
-        Cmd::Resolve(args) | Cmd::Res(args) => resolve::main(&path, args),
-        Cmd::Reset(args) => reset::main(&path, args),
-        Cmd::Show(args) | Cmd::S(args) => show::main(&path, args),
-        Cmd::Version(args) => version::main(args),
+    format_error(match args.command {
+        Command::Init(args) => init::main(&path, args),
+        Command::Clone(args) => clone::main(&path, args),
+        Command::Fetch(args) => fetch::main(&path, args),
+        Command::Pull(args) => fetch::pull_main(&path, args),
+        Command::Bnew(args) => bnew::main(&path, args),
+        Command::Bset(args) => bset::main(&path, args),
+        Command::Brename(args) => brename::main(&path, args),
+        Command::Bdelete(args) => bdelete::main(&path, args),
+        Command::Blist(args) => blist::main(&path, args),
+        Command::Bhide(args) => bhide::main(&path, args),
+        Command::Bunhide(args) => bunhide::main(&path, args),
+        Command::New(args) => new::main(&path, args),
+        Command::Delete(args) => delete::main(&path, args),
+        Command::Refresh(args) => refresh::main(&path, args),
+        Command::Message(args) => message::main(&path, args),
+        Command::Finalize(args) => finalize::main(&path, args),
+        Command::Add(args) => add::main(&path, args),
+        Command::Remove(args) => remove::main(&path, args),
+        Command::Move(args) => move_::main(&path, args),
+        Command::Include(args) => include::main(&path, args),
+        Command::Exclude(args) => exclude::main(&path, args),
+        Command::Push(args) => push::main(&path, args),
+        Command::Pop(args) => pop::main(&path, args),
+        Command::Fold(args) => fold::main(&path, args),
+        Command::Hide(args) => hide::main(&path, args),
+        Command::Unhide(args) => unhide::main(&path, args),
+        Command::List(args) => list::main(&path, args),
+        Command::Resolve(args) => resolve::main(&path, args),
+        Command::Reset(args) => reset::main(&path, args),
+        Command::Show(args) => show::main(&path, args),
+        Command::Version(args) => version::main(args),
     })
 }

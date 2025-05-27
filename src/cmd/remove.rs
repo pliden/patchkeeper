@@ -1,19 +1,16 @@
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Repository;
-use gumdrop::Options;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "<path>...")]
-    paths: Vec<PathBuf>,
+    #[cmdline(positional)]
+    path: Vec<PathBuf>,
 }
 
 pub fn remove_empty_parent_dirs(path: &Path) {
@@ -48,5 +45,5 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
 
     repo.ensure_no_unresolved()?;
 
-    remove_paths(&repo, &args.paths)
+    remove_paths(&repo, &args.path)
 }

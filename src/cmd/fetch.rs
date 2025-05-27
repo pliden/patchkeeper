@@ -6,28 +6,25 @@ use crate::repo::RepositoryUtils;
 use crate::stdout;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use colored::Colorize;
 use git2::Branch;
 use git2::BranchType;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
 use git2::Repository;
-use gumdrop::Options;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "<remote>")]
+    #[cmdline(positional)]
     remote: Option<String>,
 
-    #[options(free, help = "[<refspec>...]")]
-    refspecs: Vec<String>,
+    #[cmdline(positional)]
+    refspecs: Option<Vec<String>>,
 }
 
 fn fetch(repo: &Repository, remote: &str, refspecs: &[String]) -> Result<()> {
@@ -115,7 +112,7 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
     let repo = Repository::discover(path)?;
     let remote = args.remote.as_deref().unwrap_or(repo::ORIGIN);
 
-    fetch(&repo, remote, &args.refspecs)
+    fetch(&repo, remote, &args.refspecs.unwrap_or_default())
 }
 
 fn pull(repo: &Repository, meta: &Metadata, remote: &str, refspecs: &[String]) -> Result<()> {
@@ -156,5 +153,5 @@ pub fn pull_main(path: &Path, args: Args) -> Result<()> {
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    pull(&repo, &meta, remote, &args.refspecs)
+    pull(&repo, &meta, remote, &args.refspecs.unwrap_or_default())
 }

@@ -1,4 +1,3 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::meta::HIDDEN;
 use crate::print;
@@ -7,27 +6,24 @@ use crate::repo::CommitUtils;
 use crate::repo::RepositoryUtils;
 use crate::stdout;
 use anyhow::Result;
+use cmdline::CmdLine;
 use colored::Color;
 use colored::Colorize;
 use git2::BranchType;
 use git2::Oid;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Show all branches")]
-    all: bool,
+    #[cmdline(conflict = "0", help = "Show all branches")]
+    all: Option<()>,
 
-    #[options(short = "x", help = "Show hidden commit")]
-    hidden: bool,
+    #[cmdline(short = 'x', help = "Show hidden commit")]
+    hidden: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<branch>...]")]
-    names: Vec<String>,
+    #[cmdline(positional, conflict = "0")]
+    branch: Option<Vec<String>>,
 }
 
 fn print_branch(name: &str, is_hidden: bool, color: Color) {
@@ -105,16 +101,14 @@ fn list_current(repo: &Repository, meta: &Metadata, hidden: bool) -> Result<()> 
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::conflicting_options(&[("-a", args.all), ("<branch>", !args.names.is_empty())])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if !args.names.is_empty() {
-        list(&repo, &meta, &args.names, args.hidden)
-    } else if args.all {
-        list_all(&repo, &meta, args.hidden)
+    if let Some(names) = &args.branch {
+        list(&repo, &meta, names, args.hidden.is_some())
+    } else if args.all.is_some() {
+        list_all(&repo, &meta, args.hidden.is_some())
     } else {
-        list_current(&repo, &meta, args.hidden)
+        list_current(&repo, &meta, args.hidden.is_some())
     }
 }

@@ -1,26 +1,22 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Commit;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Pop all commits")]
-    all: bool,
+    #[cmdline(conflict = "0", help = "Pop all commits")]
+    all: Option<()>,
 
-    #[options(help = "Pop finalized commit")]
-    finalized: bool,
+    #[cmdline(conflict = "0", help = "Pop finalized commit")]
+    finalized: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<revspec>]")]
+    #[cmdline(positional, conflict = "0")]
     revspec: Option<String>,
 }
 
@@ -103,12 +99,6 @@ fn pop_next(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::conflicting_options(&[
-        ("-a", args.all),
-        ("-f", args.finalized),
-        ("<revspec>", args.revspec.is_some()),
-    ])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
@@ -117,9 +107,9 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
 
     if let Some(revspec) = args.revspec {
         pop_revspec(&repo, &meta, &revspec)
-    } else if args.all {
+    } else if args.all.is_some() {
         pop_all(&repo, &meta)
-    } else if args.finalized {
+    } else if args.finalized.is_some() {
         pop_finalized(&repo, &meta)
     } else {
         pop_next(&repo, &meta)

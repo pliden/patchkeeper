@@ -1,35 +1,31 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Commit;
 use git2::Repository;
 use git2::Signature;
-use gumdrop::Options;
 use std::path::Path;
 use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Push all commits")]
-    all: bool,
+    #[cmdline(conflict = "0", help = "Push all commits")]
+    all: Option<()>,
 
-    #[options(long = "move", meta = "<revspec>", help = "Move commit")]
+    #[cmdline(long = "move", meta = "revspec", conflict = "0", help = "Move commit")]
     move_: Option<String>,
 
-    #[options(meta = "<revspec>", help = "Graft commit")]
+    #[cmdline(meta = "revspec", conflict = "0", help = "Graft commit")]
     graft: Option<String>,
 
-    #[options(meta = "<revspec>", help = "Backout commit")]
+    #[cmdline(meta = "revspec", conflict = "0", help = "Backout commit")]
     backout: Option<String>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<revspec>]")]
+    #[cmdline(positional, conflict = "0")]
     revspec: Option<String>,
 }
 
@@ -220,14 +216,6 @@ fn push_next(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::conflicting_options(&[
-        ("-a", args.all),
-        ("-m", args.move_.is_some()),
-        ("-g", args.graft.is_some()),
-        ("-b", args.backout.is_some()),
-        ("<revspec>", args.revspec.is_some()),
-    ])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
@@ -236,7 +224,7 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
 
     if let Some(revspec) = args.revspec {
         push_revspec(&repo, &meta, &revspec)
-    } else if args.all {
+    } else if args.all.is_some() {
         push_all(&repo, &meta)
     } else if let Some(revspec) = args.move_ {
         push_move(&repo, &meta, &revspec)

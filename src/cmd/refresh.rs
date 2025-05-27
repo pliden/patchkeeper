@@ -3,24 +3,21 @@ use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Repository;
 use git2::Signature;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Mark all merge conflicts as resolved")]
-    resolve: bool,
+    #[cmdline(help = "Mark all merge conflicts as resolved")]
+    resolve: Option<()>,
 
-    #[options(help = "Update author")]
-    author: bool,
+    #[cmdline(help = "Update author")]
+    author: Option<()>,
 
-    #[options(help = "Update comitter")]
-    committer: bool,
-
-    #[options(help = "Print help message")]
-    help: bool,
+    #[cmdline(help = "Update comitter")]
+    committer: Option<()>,
 }
 
 fn refresh(repo: &Repository, meta: &Metadata, author: bool, committer: bool) -> Result<()> {
@@ -64,9 +61,14 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if !args.resolve {
+    if args.resolve.is_none() {
         repo.ensure_no_unresolved()?;
     }
 
-    refresh(&repo, &meta, args.author, args.committer)
+    refresh(
+        &repo,
+        &meta,
+        args.author.is_some(),
+        args.committer.is_some(),
+    )
 }

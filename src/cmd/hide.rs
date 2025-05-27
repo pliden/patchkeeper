@@ -1,27 +1,23 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Commit;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Hide all commits")]
-    all: bool,
+    #[cmdline(choice = "0", help = "Hide all commits")]
+    all: Option<()>,
 
-    #[options(help = "Hide next commit")]
-    next: bool,
+    #[cmdline(choice = "0", help = "Hide next commit")]
+    next: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<revspec>...]")]
-    revspecs: Vec<String>,
+    #[cmdline(positional, choice = "0")]
+    revspec: Option<Vec<String>>,
 }
 
 fn hide(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -73,20 +69,16 @@ fn hide_next(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::missing_or_conflicting_options(&[
-        ("-a", args.all),
-        ("-n", args.next),
-        ("<revspec>", !args.revspecs.is_empty()),
-    ])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if !args.revspecs.is_empty() {
-        hide_revspecs(&repo, &meta, &args.revspecs)
-    } else if args.all {
+    if let Some(revspec) = &args.revspec {
+        hide_revspecs(&repo, &meta, revspec)
+    } else if args.all.is_some() {
         hide_all(&repo, &meta)
-    } else {
+    } else if args.next.is_some() {
         hide_next(&repo, &meta)
+    } else {
+        panic!();
     }
 }

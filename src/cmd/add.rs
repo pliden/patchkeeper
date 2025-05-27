@@ -1,23 +1,18 @@
-use crate::cmd;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::IndexAddOption;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 use std::path::PathBuf;
-use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Add all untracked files")]
-    all: bool,
+    #[cmdline(choice = "0", help = "Add all untracked files")]
+    all: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<path>...]")]
-    paths: Vec<PathBuf>,
+    #[cmdline(positional, choice = "0")]
+    path: Option<Vec<PathBuf>>,
 }
 
 fn add(repo: &Repository, paths: &[PathBuf]) -> Result<()> {
@@ -36,15 +31,15 @@ fn add_all(repo: &Repository) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::missing_or_conflicting_options(&[("-a", args.all), ("<path>", !args.paths.is_empty())])?;
-
     let repo = Repository::discover(path)?;
 
     repo.ensure_no_unresolved()?;
 
-    if !args.paths.is_empty() {
-        add_paths(&repo, &args.paths)
-    } else {
+    if let Some(path) = args.path {
+        add_paths(&repo, &path)
+    } else if args.all.is_some() {
         add_all(&repo)
+    } else {
+        panic!();
     }
 }

@@ -2,18 +2,15 @@ use crate::print;
 use crate::repo::BranchUtils;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::BranchType;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "<name>")]
-    name: String,
+    #[cmdline(positional)]
+    branch: String,
 }
 
 fn set(repo: &Repository, name: &str) -> Result<()> {
@@ -32,5 +29,5 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    set(&repo, &args.name)
+    set(&repo, &args.branch)
 }

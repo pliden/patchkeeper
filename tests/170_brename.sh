@@ -3,7 +3,7 @@
 pk br -h | usage br
 pk brename -h | usage brename
 
-fail pk brename | grep "error: missing required free argument"
+fail pk brename | grep "error: missing argument '<branch...>"
 fail pk brename a b c | grep "error: too many arguments"
 
 pk init

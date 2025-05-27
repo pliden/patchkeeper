@@ -3,21 +3,18 @@ use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::BranchType;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Force delete")]
-    force: bool,
+    #[cmdline(help = "Force delete")]
+    force: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "<name>")]
-    name: String,
+    #[cmdline(positional)]
+    branch: String,
 }
 
 fn delete(repo: &Repository, meta: &Metadata, name: &str, force: bool) -> Result<()> {
@@ -41,5 +38,5 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    delete(&repo, &meta, &args.name, args.force)
+    delete(&repo, &meta, &args.branch, args.force.is_some())
 }

@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk hide | grep "error: missing option"
+fail pk hide | grep "error: missing argument '--all' or '--next' or '\[revspec...\]'"
 fail pk hide $(HEAD) | grep "error: cannot hide non-popped commit"
 
 pk new A

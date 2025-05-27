@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk fold | grep "error: missing option"
+fail pk fold | grep "error: missing argument '--next' or '\[revspec...\]'"
 fail pk fold $(HEAD) | grep "error: cannot fold non-popped commit"
 fail pk fold INVALID | grep "error: revspec 'INVALID' not found"
 

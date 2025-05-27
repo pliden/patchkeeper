@@ -4,17 +4,14 @@ use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::BranchType;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<branch>...]")]
+    #[cmdline(positional)]
     names: Vec<String>,
 }
 

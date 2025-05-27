@@ -2,18 +2,15 @@ use crate::meta::Metadata;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::BranchType;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "[<name>...]")]
-    names: Vec<String>,
+    #[cmdline(positional)]
+    branch: Vec<String>,
 }
 
 fn rename(repo: &Repository, meta: &Metadata, old_name: &str, new_name: &str) -> Result<()> {
@@ -30,7 +27,7 @@ fn rename_current(repo: &Repository, meta: &Metadata, new_name: &str) -> Result<
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    if args.names.len() > 2 {
+    if args.branch.len() > 2 {
         bail!("too many arguments");
     }
 
@@ -40,9 +37,9 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    if args.names.len() == 1 {
-        rename_current(&repo, &meta, &args.names[0])
+    if args.branch.len() == 1 {
+        rename_current(&repo, &meta, &args.branch[0])
     } else {
-        rename(&repo, &meta, &args.names[0], &args.names[1])
+        rename(&repo, &meta, &args.branch[0], &args.branch[1])
     }
 }

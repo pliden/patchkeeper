@@ -4,6 +4,7 @@ use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use crate::stdout;
 use anyhow::Result;
+use cmdline::CmdLine;
 use colored::Colorize;
 use git2::Commit;
 use git2::DiffDelta;
@@ -13,19 +14,15 @@ use git2::DiffLine;
 use git2::DiffLineType;
 use git2::Oid;
 use git2::Repository;
-use gumdrop::Options;
 use std::collections::HashMap;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Show files only")]
+    #[cmdline(help = "Show files only")]
     files: bool,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "<revspec>")]
+    #[cmdline(positional)]
     revspec: Option<String>,
 }
 

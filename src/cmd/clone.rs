@@ -1,26 +1,23 @@
 use crate::stdout;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::build::CheckoutBuilder;
 use git2::build::RepoBuilder;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
-use gumdrop::Options;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "<url>")]
+    #[cmdline(positional)]
     url: String,
 
-    #[options(free, help = "[<path>]")]
+    #[cmdline(positional)]
     path: Option<PathBuf>,
 }
 

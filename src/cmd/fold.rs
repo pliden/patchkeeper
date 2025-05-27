@@ -1,25 +1,21 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Commit;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Fold next commit")]
-    next: bool,
+    #[cmdline(choice = "0", help = "Fold next commit")]
+    next: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<revspec>...]")]
-    revspecs: Vec<String>,
+    #[cmdline(positional, choice = "0")]
+    revspec: Option<Vec<String>>,
 }
 
 fn fold(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -70,20 +66,17 @@ fn fold_next(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::missing_or_conflicting_options(&[
-        ("-n", args.next),
-        ("<revspec>", !args.revspecs.is_empty()),
-    ])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    if !args.revspecs.is_empty() {
-        fold_revspecs(&repo, &meta, &args.revspecs)
-    } else {
+    if let Some(revspec) = &args.revspec {
+        fold_revspecs(&repo, &meta, revspec)
+    } else if args.next.is_some() {
         fold_next(&repo, &meta)
+    } else {
+        panic!();
     }
 }

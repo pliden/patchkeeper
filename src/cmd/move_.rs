@@ -3,24 +3,17 @@ use crate::repo::RepositoryUtils;
 use anyhow::anyhow;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Repository;
-use gumdrop::Options;
-use itertools::chain;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "<path>...")]
-    first_path: PathBuf,
-
-    #[options(free, required, help = "<path>")]
-    other_paths: Vec<PathBuf>,
+    #[cmdline(positional)]
+    path: Vec<PathBuf>,
 }
 
 fn move_to_file(repo: &Repository, from_file: &Path, to_file: &Path) -> Result<()> {
@@ -46,14 +39,18 @@ fn move_to_dir(repo: &Repository, from_file: &Path, to_dir: &Path) -> Result<()>
     move_to_file(repo, from_file, &to_file)
 }
 
-fn move_paths(repo: &Repository, first_path: &PathBuf, other_paths: &[PathBuf]) -> Result<()> {
-    let (to, from) = other_paths.split_last().unwrap();
+fn move_paths(repo: &Repository, paths: &[PathBuf]) -> Result<()> {
+    let (to, from) = paths.split_last().unwrap();
 
-    if !from.is_empty() && !to.is_dir() {
+    if from.is_empty() {
+        bail!("must specify at least two paths");
+    }
+
+    if from.len() > 1 && !to.is_dir() {
         bail!("last path must be a directory");
     }
 
-    for path in chain!([first_path], from) {
+    for path in from {
         if to.is_dir() {
             move_to_dir(repo, path, to)?;
         } else {
@@ -69,5 +66,5 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
 
     repo.ensure_no_unresolved()?;
 
-    move_paths(&repo, &args.first_path, &args.other_paths)
+    move_paths(&repo, &args.path)
 }

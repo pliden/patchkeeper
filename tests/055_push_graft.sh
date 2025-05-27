@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk push -g | grep "error: missing argument to option"
+fail pk push -g | grep "error: missing argument for option"
 fail pk push -g INVALID | grep "error: revspec 'INVALID' not found"
 
 pk new A

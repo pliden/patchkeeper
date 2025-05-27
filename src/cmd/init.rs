@@ -1,15 +1,12 @@
 use crate::meta::Metadata;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
-pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-}
+#[derive(CmdLine)]
+pub struct Args {}
 
 pub fn main(path: &Path, _args: Args) -> Result<()> {
     let repo = Repository::initialize(path)?;

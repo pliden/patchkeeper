@@ -1,25 +1,22 @@
-use crate::meta::Metadata;
 use crate::meta::HIDDEN;
+use crate::meta::Metadata;
 use crate::print;
 use crate::repo::BranchUtils;
 use crate::stdout;
 use anyhow::Result;
+use cmdline::CmdLine;
 use colored::Colorize;
 use git2::BranchType;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Show remote branches")]
-    remote: bool,
+    #[cmdline(help = "Show remote branches")]
+    remote: Option<()>,
 
-    #[options(short = "x", help = "Show hidden branches")]
-    hidden: bool,
-
-    #[options(help = "Print help message")]
-    help: bool,
+    #[cmdline(short = 'x', help = "Show hidden branches")]
+    hidden: Option<()>,
 }
 
 fn is_branch_hidden(meta: &Metadata, name: &str) -> Result<bool> {
@@ -51,5 +48,5 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    list(&repo, &meta, args.remote, args.hidden)
+    list(&repo, &meta, args.remote.is_some(), args.hidden.is_some())
 }

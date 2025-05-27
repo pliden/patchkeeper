@@ -19,6 +19,6 @@ pk new 2
 assert $(metadata | revision) == 4
 assert $(metadata | pushed | count) == 3
 
-fail pk new | grep "error: missing required free argument"
+fail pk new | grep "error: missing argument '<message...>'"
 
 # End of file

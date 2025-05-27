@@ -3,7 +3,7 @@
 pk i -h | usage i
 pk include -h | usage include
 
-fail pk include | grep "error: missing required free argument"
+fail pk include | grep "error: missing argument '<path...>'"
 
 pk init
 pk new INITIAL

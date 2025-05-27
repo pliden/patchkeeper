@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk add | grep "error: missing option"
+fail pk add | grep "error: missing argument '--all' or '\[path...\]'"
 fail pk add INVALID | grep "error: file not found: INVALID"
 
 pk new A

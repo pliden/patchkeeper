@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk bdelete | grep "error: missing required free argument"
+fail pk bdelete | grep "error: missing argument '<branch>'"
 
 grep "ref: refs/heads/main" .git/HEAD
 grep $(HEAD) .git/refs/heads/main

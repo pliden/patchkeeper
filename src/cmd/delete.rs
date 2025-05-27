@@ -1,28 +1,24 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
 use crate::ui;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Commit;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Interactive mode")]
-    interactive: bool,
+    #[cmdline(choice = "0", help = "Interactive mode")]
+    interactive: Option<()>,
 
-    #[options(help = "Delete next commit")]
-    next: bool,
+    #[cmdline(choice = "0", help = "Delete next commit")]
+    next: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<revspec>...]")]
-    revspecs: Vec<String>,
+    #[cmdline(positional, choice = "0")]
+    revspec: Option<Vec<String>>,
 }
 
 fn delete(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -84,20 +80,16 @@ fn delete_next(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::missing_or_conflicting_options(&[
-        ("-i", args.interactive),
-        ("-n", args.next),
-        ("<revspec>", !args.revspecs.is_empty()),
-    ])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if args.interactive {
+    if args.interactive.is_some() {
         delete_interactive(&repo, &meta)
-    } else if !args.revspecs.is_empty() {
-        delete_revspecs(&repo, &meta, &args.revspecs)
-    } else {
+    } else if let Some(revspec) = &args.revspec {
+        delete_revspecs(&repo, &meta, revspec)
+    } else if args.next.is_some() {
         delete_next(&repo, &meta)
+    } else {
+        panic!();
     }
 }

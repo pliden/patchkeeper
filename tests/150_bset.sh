@@ -7,7 +7,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk bset | grep "error: missing required free argument"
+fail pk bset | grep "error: missing argument '<branch>'"
 
 pk bnew branch0
 grep "ref: refs/heads/branch0" .git/HEAD

@@ -1,14 +1,11 @@
 use crate::stdout;
 use anyhow::Result;
-use gumdrop::Options;
+use cmdline::CmdLine;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-#[derive(Options)]
-pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-}
+#[derive(CmdLine)]
+pub struct Args {}
 
 pub fn main(_args: Args) -> Result<()> {
     stdout!("patchkeeper {VERSION}\n");

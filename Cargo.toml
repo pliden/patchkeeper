@@ -7,16 +7,14 @@ authors = ["Per Liden <per@malloc.se>"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.86"
-chrono = "0.4.38"
-colored = "2.1.0"
-crossterm = "0.28.1"
-git2 = { version = "0.20.1", features = ["vendored-libgit2"] }
-gumdrop = "0.8"
-itertools = "0.13.0"
-ratatui = "0.28.1"
+anyhow = "1.0"
+chrono = "0.4"
+colored = "3.0"
+ratatui = "0.29"
+crossterm = "0.29"
+itertools = "0.14"
+git2 = { version = "0.20", features = ["vendored-libgit2"] }
 cmdline = { path = "./cmdline" }
-lexopt = "0.3.1"
 
 [patch.crates-io]
 git2 = { git = 'https://github.com/pliden/git2-rs.git' }

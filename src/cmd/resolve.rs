@@ -1,4 +1,3 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::IndexUtils;
@@ -6,28 +5,24 @@ use crate::repo::RepositoryUtils;
 use crate::stdout;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 use std::path::PathBuf;
-use std::str;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Mark all merge conflicts as resolved")]
-    all: bool,
+    #[cmdline(choice = "0", help = "Mark all merge conflicts as resolved")]
+    all: Option<()>,
 
-    #[options(help = "List unresolved merge conflicts")]
-    list: bool,
+    #[cmdline(choice = "0", help = "List unresolved merge conflicts")]
+    list: Option<()>,
 
-    #[options(help = "Undo push causing current merge conflict")]
-    undo: bool,
+    #[cmdline(choice = "0", help = "Undo push causing current merge conflict")]
+    undo: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<path>...]")]
-    paths: Vec<PathBuf>,
+    #[cmdline(positional, choice = "0")]
+    path: Option<Vec<PathBuf>>,
 }
 
 fn resolve(repo: &Repository, paths: Option<&Vec<PathBuf>>) -> Result<()> {
@@ -91,23 +86,18 @@ fn undo(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::missing_or_conflicting_options(&[
-        ("-a", args.all),
-        ("-l", args.list),
-        ("-u", args.undo),
-        ("<path>", !args.paths.is_empty()),
-    ])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if !args.paths.is_empty() {
-        resolve(&repo, Some(&args.paths))
-    } else if args.all {
+    if let Some(path) = args.path {
+        resolve(&repo, Some(&path))
+    } else if args.all.is_some() {
         resolve(&repo, None)
-    } else if args.list {
+    } else if args.list.is_some() {
         list(&repo)
-    } else {
+    } else if args.undo.is_some() {
         undo(&repo, &meta)
+    } else {
+        panic!();
     }
 }

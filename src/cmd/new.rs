@@ -4,20 +4,17 @@ use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Commit;
 use git2::Error;
 use git2::ErrorClass;
 use git2::ErrorCode;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "<message>")]
+    #[cmdline(positional)]
     message: Vec<String>,
 }
 

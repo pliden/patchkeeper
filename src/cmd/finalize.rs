@@ -3,15 +3,12 @@ use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
-pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-}
+#[derive(CmdLine)]
+pub struct Args {}
 
 fn finalize(repo: &Repository, meta: &Metadata) -> Result<()> {
     let name = repo.head_name()?;

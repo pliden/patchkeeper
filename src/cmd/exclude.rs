@@ -3,19 +3,16 @@ use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::IndexAddOption;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, required, help = "<path>...")]
-    paths: Vec<PathBuf>,
+    #[cmdline(positional)]
+    path: Vec<PathBuf>,
 }
 
 fn exclude(repo: &Repository, meta: &Metadata, paths: &[PathBuf]) -> Result<()> {
@@ -63,5 +60,5 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
 
     repo.ensure_no_unresolved()?;
 
-    exclude(&repo, &meta, &args.paths)
+    exclude(&repo, &meta, &args.path)
 }

@@ -53,7 +53,7 @@ fail() {
 
 usage() {
     [ "$1" ] || false
-    grep "^Usage: pk $1 "
+    grep "^usage: pk $1"
 }
 
 count() {

@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk remove | grep "error: missing required free argument"
+fail pk remove | grep "error: missing argument '<path...>'"
 fail pk remove INVALID | grep "error: file not found: INVALID"
 
 pk new A

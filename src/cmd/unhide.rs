@@ -1,24 +1,20 @@
-use crate::cmd;
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
+use cmdline::CmdLine;
 use git2::Commit;
 use git2::Repository;
-use gumdrop::Options;
 use std::path::Path;
 
-#[derive(Options)]
+#[derive(CmdLine)]
 pub struct Args {
-    #[options(help = "Unhide all commits")]
-    all: bool,
+    #[cmdline(choice = "0", help = "Unhide all commits")]
+    all: Option<()>,
 
-    #[options(help = "Print help message")]
-    help: bool,
-
-    #[options(free, help = "[<revspec>...]")]
-    revspecs: Vec<String>,
+    #[cmdline(positional, choice = "0")]
+    revspec: Option<Vec<String>>,
 }
 
 fn unhide(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -61,17 +57,14 @@ fn unhide_all(repo: &Repository, meta: &Metadata) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
-    cmd::missing_or_conflicting_options(&[
-        ("-a", args.all),
-        ("<revspec>", !args.revspecs.is_empty()),
-    ])?;
-
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if args.all {
+    if let Some(revspec) = args.revspec {
+        unhide_revspecs(&repo, &meta, &revspec)
+    } else if args.all.is_some() {
         unhide_all(&repo, &meta)
     } else {
-        unhide_revspecs(&repo, &meta, &args.revspecs)
+        panic!();
     }
 }

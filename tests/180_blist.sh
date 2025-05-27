@@ -1,7 +1,7 @@
 # Test blist
 
-pk bls -h | usage bls
 pk blist -h | usage blist
+pk bls -h | usage blist
 
 pk init
 pk new INITIAL
