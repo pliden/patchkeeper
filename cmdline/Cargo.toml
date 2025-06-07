@@ -1,0 +1,13 @@
+[package]
+name = "cmdline"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+
+[dependencies]
+cmdline_derive = { version = "0.1.0", path = "../cmdline_derive" }
+lexopt = "0"
+
+[dev-dependencies]
+indoc = "2"

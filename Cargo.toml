@@ -15,6 +15,8 @@ git2 = { version = "0.20.1", features = ["vendored-libgit2"] }
 gumdrop = "0.8"
 itertools = "0.13.0"
 ratatui = "0.28.1"
+cmdline = { path = "./cmdline" }
+lexopt = "0.3.1"
 
 [patch.crates-io]
 git2 = { git = 'https://github.com/pliden/git2-rs.git' }
