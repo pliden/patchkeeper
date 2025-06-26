@@ -70,8 +70,8 @@ pub fn branch_map(repo: &Repository) -> Result<BranchMap> {
 fn branch_heads_on_commit(commit: &Commit, branch_map: &BranchMap) -> String {
     match branch_map.get(&commit.id()) {
         Some(info) => match (&info.head, info.non_heads.is_empty()) {
-            (Some(head), false) => format!("({} -> {}, {})", HEAD, head, info.non_heads.join(", ")),
-            (Some(head), true) => format!("({} -> {})", HEAD, head),
+            (Some(head), false) => format!("({HEAD} -> {head}, {})", info.non_heads.join(", ")),
+            (Some(head), true) => format!("({HEAD} -> {head})"),
             (None, _) => format!("({})", info.non_heads.join(", ")),
         },
         _ => String::new(),

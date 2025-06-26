@@ -73,7 +73,7 @@ fn format_commits(commits: &[Commit]) -> Vec<String> {
         .map(|commit| {
             let id = commit.short_id().unwrap_or("<invalid id>".to_string());
             let summary = commit.summary().unwrap_or("<empty>");
-            format!("{} {}", id, summary)
+            format!("{id} {summary}")
         })
         .collect::<Vec<_>>()
 }
@@ -90,9 +90,9 @@ fn format_item(item: &str, padding: usize, width: usize) -> String {
 
     if item.len() > width_max {
         let item = &item[..width_max - dots.len()];
-        format!("{:>padding$}{}{}{:<padding$}", pad, item, dots, pad)
+        format!("{pad:>padding$}{item}{dots}{pad:<padding$}")
     } else {
-        format!("{:>padding$}{}{:<padding$}", pad, item, pad)
+        format!("{pad:>padding$}{item}{pad:<padding$}")
     }
 }
 

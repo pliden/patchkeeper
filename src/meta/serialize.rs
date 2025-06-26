@@ -170,7 +170,7 @@ impl fmt::Display for Properties {
                 _ => Line::PropertyFlag(name),
             };
 
-            write!(f, "{}", property)?;
+            write!(f, "{property}")?;
         }
 
         Ok(())
@@ -203,7 +203,7 @@ impl fmt::Display for Branches {
             .sorted_by_key(|(name, _)| *name)
         {
             write!(f, "{}", Line::Branch(name))?;
-            write!(f, "{}", branch)?;
+            write!(f, "{branch}")?;
         }
 
         Ok(())
