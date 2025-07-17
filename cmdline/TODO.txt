@@ -1,3 +1,0 @@
-- test all error variants
-- check that enum field with options must be last, this is hard to detect...
-- add documentation
