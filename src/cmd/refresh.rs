@@ -3,12 +3,12 @@ use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use anyhow::bail;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::Repository;
 use git2::Signature;
+use immargs::ImmArgs;
 use std::path::Path;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(help = "Mark all merge conflicts as resolved")]
     resolve: Option<()>,

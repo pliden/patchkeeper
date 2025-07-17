@@ -1,6 +1,6 @@
 use anyhow::anyhow;
 use anyhow::Result;
-use cmdline::CmdLine;
+use immargs::ImmArgs;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -36,7 +36,7 @@ mod show;
 mod unhide;
 mod version;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 struct Args {
     #[cmdline(meta = "path", help = "Path to repository")]
     repo: Option<PathBuf>,
@@ -45,7 +45,7 @@ struct Args {
     command: Command,
 }
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 enum Command {
     #[cmdline(help = "Initialize repository")]
     Init(init::Args),

@@ -1,16 +1,16 @@
-use crate::meta::HIDDEN;
 use crate::meta::Metadata;
+use crate::meta::HIDDEN;
 use crate::print;
 use crate::repo::BranchUtils;
 use crate::stdout;
 use anyhow::Result;
-use cmdline::CmdLine;
 use colored::Colorize;
 use git2::BranchType;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(help = "Show remote branches")]
     remote: Option<()>,

@@ -1,10 +1,10 @@
 use crate::stdout;
 use anyhow::Result;
-use cmdline::CmdLine;
+use immargs::ImmArgs;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {}
 
 pub fn main(_args: Args) -> Result<()> {

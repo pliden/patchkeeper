@@ -5,12 +5,12 @@ use crate::repo::RepositoryUtils;
 use crate::stdout;
 use anyhow::bail;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(choice = "0", help = "Mark all merge conflicts as resolved")]
     all: Option<()>,

@@ -1,12 +1,12 @@
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::IndexAddOption;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(choice = "0", help = "Add all untracked files")]
     all: Option<()>,

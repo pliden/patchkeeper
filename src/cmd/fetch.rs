@@ -6,19 +6,19 @@ use crate::repo::RepositoryUtils;
 use crate::stdout;
 use anyhow::bail;
 use anyhow::Result;
-use cmdline::CmdLine;
 use colored::Colorize;
 use git2::Branch;
 use git2::BranchType;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::str;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(positional)]
     remote: Option<String>,

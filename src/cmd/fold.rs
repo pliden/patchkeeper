@@ -3,13 +3,13 @@ use crate::print;
 use crate::repo::RepositoryUtils;
 use anyhow::bail;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::Commit;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 use std::str;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(choice = "0", help = "Fold next commit")]
     next: Option<()>,

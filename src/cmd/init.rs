@@ -1,11 +1,11 @@
 use crate::meta::Metadata;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {}
 
 pub fn main(path: &Path, _args: Args) -> Result<()> {

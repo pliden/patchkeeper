@@ -1,13 +1,13 @@
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(positional)]
     path: Vec<PathBuf>,

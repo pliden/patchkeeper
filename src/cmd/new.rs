@@ -4,15 +4,15 @@ use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use anyhow::bail;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::Commit;
 use git2::Error;
 use git2::ErrorClass;
 use git2::ErrorCode;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(positional)]
     message: Vec<String>,

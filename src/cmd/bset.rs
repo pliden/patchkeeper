@@ -2,12 +2,12 @@ use crate::print;
 use crate::repo::BranchUtils;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::BranchType;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(positional)]
     branch: String,

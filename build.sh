@@ -1,6 +1,7 @@
 #!/bin/sh
 
-cargo clippy -- -D warnings
+set -x
 cargo build $CARGO_BUILD_OPTIONS "$@"
+cargo clippy -- -D warnings
 
 # End of file

@@ -6,15 +6,15 @@ use crate::repo::CommitUtils;
 use crate::repo::RepositoryUtils;
 use crate::stdout;
 use anyhow::Result;
-use cmdline::CmdLine;
 use colored::Color;
 use colored::Colorize;
 use git2::BranchType;
 use git2::Oid;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::path::Path;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(conflict = "0", help = "Show all branches")]
     all: Option<()>,

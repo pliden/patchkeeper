@@ -1,18 +1,18 @@
 use crate::stdout;
 use anyhow::bail;
 use anyhow::Result;
-use cmdline::CmdLine;
 use git2::build::CheckoutBuilder;
 use git2::build::RepoBuilder;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
+use immargs::ImmArgs;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(positional)]
     url: String,

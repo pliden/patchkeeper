@@ -4,7 +4,6 @@ use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
 use crate::stdout;
 use anyhow::Result;
-use cmdline::CmdLine;
 use colored::Colorize;
 use git2::Commit;
 use git2::DiffDelta;
@@ -14,10 +13,11 @@ use git2::DiffLine;
 use git2::DiffLineType;
 use git2::Oid;
 use git2::Repository;
+use immargs::ImmArgs;
 use std::collections::HashMap;
 use std::path::Path;
 
-#[derive(CmdLine)]
+#[derive(ImmArgs)]
 pub struct Args {
     #[cmdline(help = "Show files only")]
     files: bool,

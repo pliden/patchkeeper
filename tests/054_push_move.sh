@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk push -m | grep "error: missing argument for option"
+fail pk push -m | grep "error: missing value for option"
 fail pk push -m $(HEAD) | grep "error: cannot move non-popped commit"
 fail pk push -m INVALID | grep "error: revspec 'INVALID' not found"
 
