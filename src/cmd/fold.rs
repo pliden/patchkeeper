@@ -11,10 +11,10 @@ use std::str;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(choice = "0", help = "Fold next commit")]
+    #[arg(choice = "0", help = "Fold next commit")]
     next: Option<()>,
 
-    #[cmdline(positional, choice = "0")]
+    #[arg(positional, choice = "0")]
     revspec: Option<Vec<String>>,
 }
 

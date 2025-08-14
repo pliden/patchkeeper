@@ -16,13 +16,13 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(conflict = "0", help = "Show all branches")]
+    #[arg(conflict = "0", help = "Show all branches")]
     all: Option<()>,
 
-    #[cmdline(short = 'x', help = "Show hidden commit")]
+    #[arg(short = 'x', help = "Show hidden commit")]
     hidden: Option<()>,
 
-    #[cmdline(positional, conflict = "0")]
+    #[arg(positional, conflict = "0")]
     branch: Option<Vec<String>>,
 }
 

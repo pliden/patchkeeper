@@ -9,7 +9,7 @@ use std::str;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(positional)]
+    #[arg(positional)]
     path: Vec<PathBuf>,
 }
 

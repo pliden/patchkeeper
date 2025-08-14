@@ -509,11 +509,11 @@ dependencies = [
 name = "immargs"
 version = "0.1.0"
 dependencies = [
- "immargs_derive",
+ "immargs_macro",
 ]
 
 [[package]]
-name = "immargs_derive"
+name = "immargs_macro"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",

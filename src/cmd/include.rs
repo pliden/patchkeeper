@@ -11,7 +11,7 @@ use std::path::PathBuf;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(positional)]
+    #[arg(positional)]
     path: Vec<PathBuf>,
 }
 

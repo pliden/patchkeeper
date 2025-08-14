@@ -10,13 +10,13 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(help = "Mark all merge conflicts as resolved")]
+    #[arg(help = "Mark all merge conflicts as resolved")]
     resolve: Option<()>,
 
-    #[cmdline(help = "Update author")]
+    #[arg(help = "Update author")]
     author: Option<()>,
 
-    #[cmdline(help = "Update comitter")]
+    #[arg(help = "Update comitter")]
     committer: Option<()>,
 }
 

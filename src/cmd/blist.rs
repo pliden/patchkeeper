@@ -12,10 +12,10 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(help = "Show remote branches")]
+    #[arg(help = "Show remote branches")]
     remote: Option<()>,
 
-    #[cmdline(short = 'x', help = "Show hidden branches")]
+    #[arg(short = 'x', help = "Show hidden branches")]
     hidden: Option<()>,
 }
 

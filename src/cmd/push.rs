@@ -13,19 +13,19 @@ use std::str;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(conflict = "0", help = "Push all commits")]
+    #[arg(conflict = "0", help = "Push all commits")]
     all: Option<()>,
 
-    #[cmdline(long = "move", meta = "revspec", conflict = "0", help = "Move commit")]
+    #[arg(long = "move", meta = "revspec", conflict = "0", help = "Move commit")]
     move_: Option<String>,
 
-    #[cmdline(meta = "revspec", conflict = "0", help = "Graft commit")]
+    #[arg(meta = "revspec", conflict = "0", help = "Graft commit")]
     graft: Option<String>,
 
-    #[cmdline(meta = "revspec", conflict = "0", help = "Backout commit")]
+    #[arg(meta = "revspec", conflict = "0", help = "Backout commit")]
     backout: Option<String>,
 
-    #[cmdline(positional, conflict = "0")]
+    #[arg(positional, conflict = "0")]
     revspec: Option<String>,
 }
 

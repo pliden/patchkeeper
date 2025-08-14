@@ -10,7 +10,7 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(positional)]
+    #[arg(positional)]
     name: String,
 }
 

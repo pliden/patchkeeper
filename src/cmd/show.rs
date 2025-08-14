@@ -19,10 +19,10 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(help = "Show files only")]
+    #[arg(help = "Show files only")]
     files: bool,
 
-    #[cmdline(positional)]
+    #[arg(positional)]
     revspec: Option<String>,
 }
 

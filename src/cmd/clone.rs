@@ -14,10 +14,10 @@ use std::str;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(positional)]
+    #[arg(positional)]
     url: String,
 
-    #[cmdline(positional)]
+    #[arg(positional)]
     path: Option<PathBuf>,
 }
 

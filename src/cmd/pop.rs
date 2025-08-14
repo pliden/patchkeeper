@@ -10,13 +10,13 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(conflict = "0", help = "Pop all commits")]
+    #[arg(conflict = "0", help = "Pop all commits")]
     all: Option<()>,
 
-    #[cmdline(conflict = "0", help = "Pop finalized commit")]
+    #[arg(conflict = "0", help = "Pop finalized commit")]
     finalized: Option<()>,
 
-    #[cmdline(positional, conflict = "0")]
+    #[arg(positional, conflict = "0")]
     revspec: Option<String>,
 }
 

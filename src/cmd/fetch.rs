@@ -20,10 +20,10 @@ use std::str;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(positional)]
+    #[arg(positional)]
     remote: Option<String>,
 
-    #[cmdline(positional)]
+    #[arg(positional)]
     refspecs: Option<Vec<String>>,
 }
 

@@ -10,10 +10,10 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(help = "Force delete")]
+    #[arg(help = "Force delete")]
     force: Option<()>,
 
-    #[cmdline(positional)]
+    #[arg(positional)]
     branch: String,
 }
 

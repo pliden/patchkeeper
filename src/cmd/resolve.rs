@@ -12,16 +12,16 @@ use std::path::PathBuf;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(choice = "0", help = "Mark all merge conflicts as resolved")]
+    #[arg(choice = "0", help = "Mark all merge conflicts as resolved")]
     all: Option<()>,
 
-    #[cmdline(choice = "0", help = "List unresolved merge conflicts")]
+    #[arg(choice = "0", help = "List unresolved merge conflicts")]
     list: Option<()>,
 
-    #[cmdline(choice = "0", help = "Undo push causing current merge conflict")]
+    #[arg(choice = "0", help = "Undo push causing current merge conflict")]
     undo: Option<()>,
 
-    #[cmdline(positional, choice = "0")]
+    #[arg(positional, choice = "0")]
     path: Option<Vec<PathBuf>>,
 }
 

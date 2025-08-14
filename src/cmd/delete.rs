@@ -11,13 +11,13 @@ use std::path::Path;
 
 #[derive(ImmArgs)]
 pub struct Args {
-    #[cmdline(choice = "0", help = "Interactive mode")]
+    #[arg(choice = "0", help = "Interactive mode")]
     interactive: Option<()>,
 
-    #[cmdline(choice = "0", help = "Delete next commit")]
+    #[arg(choice = "0", help = "Delete next commit")]
     next: Option<()>,
 
-    #[cmdline(positional, choice = "0")]
+    #[arg(positional, choice = "0")]
     revspec: Option<Vec<String>>,
 }
 

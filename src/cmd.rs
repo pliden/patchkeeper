@@ -38,106 +38,106 @@ mod version;
 
 #[derive(ImmArgs)]
 struct Args {
-    #[cmdline(meta = "path", help = "Path to repository")]
+    #[arg(meta = "path", help = "Path to repository")]
     repo: Option<PathBuf>,
 
-    #[cmdline(positional, variants = "commands")]
+    #[arg(positional, variants = "commands")]
     command: Command,
 }
 
 #[derive(ImmArgs)]
 enum Command {
-    #[cmdline(help = "Initialize repository")]
+    #[arg(help = "Initialize repository")]
     Init(init::Args),
 
-    #[cmdline(help = "Clone repository")]
+    #[arg(help = "Clone repository")]
     Clone(clone::Args),
 
-    #[cmdline(help = "Fetch remote commit(s)")]
+    #[arg(help = "Fetch remote commit(s)")]
     Fetch(fetch::Args),
 
-    #[cmdline(help = "Pull remote commit(s)")]
+    #[arg(help = "Pull remote commit(s)")]
     Pull(fetch::Args),
 
-    #[cmdline(alias = "bn", help = "New branch")]
+    #[arg(alias = "bn", help = "New branch")]
     Bnew(bnew::Args),
 
-    #[cmdline(alias = "b", help = "Set branch")]
+    #[arg(alias = "b", help = "Set branch")]
     Bset(bset::Args),
 
-    #[cmdline(alias = "br", help = "Rename branch")]
+    #[arg(alias = "br", help = "Rename branch")]
     Brename(brename::Args),
 
-    #[cmdline(alias = "bd", help = "Delete branch")]
+    #[arg(alias = "bd", help = "Delete branch")]
     Bdelete(bdelete::Args),
 
-    #[cmdline(alias = "bls", alias = "bl", help = "List branches")]
+    #[arg(alias = "bls", alias = "bl", help = "List branches")]
     Blist(blist::Args),
 
-    #[cmdline(help = "Hide branch")]
+    #[arg(help = "Hide branch")]
     Bhide(bhide::Args),
 
-    #[cmdline(help = "Unhide branch")]
+    #[arg(help = "Unhide branch")]
     Bunhide(bunhide::Args),
 
-    #[cmdline(alias = "n", help = "New commit")]
+    #[arg(alias = "n", help = "New commit")]
     New(new::Args),
 
-    #[cmdline(alias = "del", help = "Delete commit")]
+    #[arg(alias = "del", help = "Delete commit")]
     Delete(delete::Args),
 
-    #[cmdline(alias = "r", help = "Refresh commit")]
+    #[arg(alias = "r", help = "Refresh commit")]
     Refresh(refresh::Args),
 
-    #[cmdline(alias = "msg", alias = "m", help = "Set commit message")]
+    #[arg(alias = "msg", alias = "m", help = "Set commit message")]
     Message(message::Args),
 
-    #[cmdline(alias = "fin", help = "Finalize commit(s)")]
+    #[arg(alias = "fin", help = "Finalize commit(s)")]
     Finalize(finalize::Args),
 
-    #[cmdline(alias = "a", help = "Add file(s)")]
+    #[arg(alias = "a", help = "Add file(s)")]
     Add(add::Args),
 
-    #[cmdline(alias = "rm", help = "Remove file(s)")]
+    #[arg(alias = "rm", help = "Remove file(s)")]
     Remove(remove::Args),
 
-    #[cmdline(alias = "mv", help = "Move file(s)")]
+    #[arg(alias = "mv", help = "Move file(s)")]
     Move(move_::Args),
 
-    #[cmdline(alias = "i", help = "Include file(s) in commit")]
+    #[arg(alias = "i", help = "Include file(s) in commit")]
     Include(include::Args),
 
-    #[cmdline(alias = "x", help = "Exclude file(s) from commit")]
+    #[arg(alias = "x", help = "Exclude file(s) from commit")]
     Exclude(exclude::Args),
 
-    #[cmdline(alias = "pu", help = "Push commit")]
+    #[arg(alias = "pu", help = "Push commit")]
     Push(push::Args),
 
-    #[cmdline(alias = "po", help = "Pop commit")]
+    #[arg(alias = "po", help = "Pop commit")]
     Pop(pop::Args),
 
-    #[cmdline(help = "Fold commit")]
+    #[arg(help = "Fold commit")]
     Fold(fold::Args),
 
-    #[cmdline(help = "Hide commit")]
+    #[arg(help = "Hide commit")]
     Hide(hide::Args),
 
-    #[cmdline(help = "Unhide commit")]
+    #[arg(help = "Unhide commit")]
     Unhide(unhide::Args),
 
-    #[cmdline(alias = "ls", alias = "l", help = "List commits")]
+    #[arg(alias = "ls", alias = "l", help = "List commits")]
     List(list::Args),
 
-    #[cmdline(alias = "res", help = "Resolve merge conflict")]
+    #[arg(alias = "res", help = "Resolve merge conflict")]
     Resolve(resolve::Args),
 
-    #[cmdline(help = "Reset head")]
+    #[arg(help = "Reset head")]
     Reset(reset::Args),
 
-    #[cmdline(alias = "s", help = "Show commit")]
+    #[arg(alias = "s", help = "Show commit")]
     Show(show::Args),
 
-    #[cmdline(help = "Show version")]
+    #[arg(help = "Show version")]
     Version(version::Args),
 }
 
@@ -164,8 +164,7 @@ fn format_error(result: Result<()>) -> Result<()> {
 }
 
 pub fn main() -> Result<()> {
-    let args = Args::from_env("pk");
-
+    let args = Args::from_env(Some("pk"));
     let path = args.repo.unwrap_or(env::current_dir()?);
 
     format_error(match args.command {
