@@ -1,13 +1,12 @@
 use crate::stdout;
 use anyhow::Result;
-use immargs::ImmArgs;
+use immargs::Args;
+use immargs::immargs;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-#[derive(ImmArgs)]
-pub struct Args {}
-
-pub fn main(_args: Args) -> Result<()> {
+pub fn main(args: Args) -> Result<()> {
+    let _ = immargs!({ args });
     stdout!("patchkeeper {VERSION}\n");
     Ok(())
 }

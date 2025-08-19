@@ -4,28 +4,20 @@ use crate::repo::BranchUtils;
 use crate::repo::CommitUtils;
 use crate::repo::RepositoryUtils;
 use crate::stdout;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use colored::Colorize;
 use git2::Branch;
 use git2::BranchType;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::Args;
+use immargs::immargs;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::str;
-
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    remote: Option<String>,
-
-    #[arg(positional)]
-    refspecs: Option<Vec<String>>,
-}
 
 fn fetch(repo: &Repository, remote: &str, refspecs: &[String]) -> Result<()> {
     let mut remote = repo
@@ -109,10 +101,16 @@ fn fetch(repo: &Repository, remote: &str, refspecs: &[String]) -> Result<()> {
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
+    let args = immargs!(
+        { args }
+        [remote] String,
+        [refspecs...] String,
+    );
+
     let repo = Repository::discover(path)?;
     let remote = args.remote.as_deref().unwrap_or(repo::ORIGIN);
 
-    fetch(&repo, remote, &args.refspecs.unwrap_or_default())
+    fetch(&repo, remote, &args.refspecs)
 }
 
 fn pull(repo: &Repository, meta: &Metadata, remote: &str, refspecs: &[String]) -> Result<()> {
@@ -146,6 +144,12 @@ fn pull(repo: &Repository, meta: &Metadata, remote: &str, refspecs: &[String]) -
 }
 
 pub fn pull_main(path: &Path, args: Args) -> Result<()> {
+    let args = immargs!(
+        { args }
+        [remote] String,
+        [refspecs...] String,
+    );
+
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
     let remote = args.remote.as_deref().unwrap_or(repo::ORIGIN);
@@ -153,5 +157,5 @@ pub fn pull_main(path: &Path, args: Args) -> Result<()> {
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    pull(&repo, &meta, remote, &args.refspecs.unwrap_or_default())
+    pull(&repo, &meta, remote, &args.refspecs)
 }

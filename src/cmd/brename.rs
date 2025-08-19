@@ -1,17 +1,12 @@
 use crate::meta::Metadata;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::BranchType;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::Args;
+use immargs::immargs;
 use std::path::Path;
-
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    branch: Vec<String>,
-}
 
 fn rename(repo: &Repository, meta: &Metadata, old_name: &str, new_name: &str) -> Result<()> {
     let mut branch = repo.find_branch(old_name, BranchType::Local)?;
@@ -27,6 +22,12 @@ fn rename_current(repo: &Repository, meta: &Metadata, new_name: &str) -> Result<
 }
 
 pub fn main(path: &Path, args: Args) -> Result<()> {
+    let args = immargs!(
+        [from] String   "From branch name",
+        <to> String     "To branch name",
+        // FIXME! Add support for optional before required....
+    );
+
     if args.branch.len() > 2 {
         bail!("too many arguments");
     }

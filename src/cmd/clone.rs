@@ -1,25 +1,17 @@
 use crate::stdout;
-use anyhow::bail;
 use anyhow::Result;
-use git2::build::CheckoutBuilder;
-use git2::build::RepoBuilder;
+use anyhow::bail;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
-use immargs::ImmArgs;
+use git2::build::CheckoutBuilder;
+use git2::build::RepoBuilder;
+use immargs::Args;
+use immargs::immargs;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
-
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    url: String,
-
-    #[arg(positional)]
-    path: Option<PathBuf>,
-}
 
 fn clone(url: &str, path: Option<PathBuf>) -> Result<()> {
     let path = match path {
@@ -97,5 +89,11 @@ fn clone(url: &str, path: Option<PathBuf>) -> Result<()> {
 }
 
 pub fn main(_path: &Path, args: Args) -> Result<()> {
+    let args = immargs!(
+        { args }
+        <url> String     "Repository to clone",
+        [path] PathBuf   "Destination directory",
+    );
+
     clone(&args.url, args.path)
 }

@@ -1,6 +1,6 @@
-use anyhow::anyhow;
 use anyhow::Result;
-use immargs::ImmArgs;
+use anyhow::anyhow;
+use immargs::immargs;
 use std::env;
 use std::io;
 use std::path::PathBuf;
@@ -36,111 +36,6 @@ mod show;
 mod unhide;
 mod version;
 
-#[derive(ImmArgs)]
-struct Args {
-    #[arg(meta = "path", help = "Path to repository")]
-    repo: Option<PathBuf>,
-
-    #[arg(positional, variants = "commands")]
-    command: Command,
-}
-
-#[derive(ImmArgs)]
-enum Command {
-    #[arg(help = "Initialize repository")]
-    Init(init::Args),
-
-    #[arg(help = "Clone repository")]
-    Clone(clone::Args),
-
-    #[arg(help = "Fetch remote commit(s)")]
-    Fetch(fetch::Args),
-
-    #[arg(help = "Pull remote commit(s)")]
-    Pull(fetch::Args),
-
-    #[arg(alias = "bn", help = "New branch")]
-    Bnew(bnew::Args),
-
-    #[arg(alias = "b", help = "Set branch")]
-    Bset(bset::Args),
-
-    #[arg(alias = "br", help = "Rename branch")]
-    Brename(brename::Args),
-
-    #[arg(alias = "bd", help = "Delete branch")]
-    Bdelete(bdelete::Args),
-
-    #[arg(alias = "bls", alias = "bl", help = "List branches")]
-    Blist(blist::Args),
-
-    #[arg(help = "Hide branch")]
-    Bhide(bhide::Args),
-
-    #[arg(help = "Unhide branch")]
-    Bunhide(bunhide::Args),
-
-    #[arg(alias = "n", help = "New commit")]
-    New(new::Args),
-
-    #[arg(alias = "del", help = "Delete commit")]
-    Delete(delete::Args),
-
-    #[arg(alias = "r", help = "Refresh commit")]
-    Refresh(refresh::Args),
-
-    #[arg(alias = "msg", alias = "m", help = "Set commit message")]
-    Message(message::Args),
-
-    #[arg(alias = "fin", help = "Finalize commit(s)")]
-    Finalize(finalize::Args),
-
-    #[arg(alias = "a", help = "Add file(s)")]
-    Add(add::Args),
-
-    #[arg(alias = "rm", help = "Remove file(s)")]
-    Remove(remove::Args),
-
-    #[arg(alias = "mv", help = "Move file(s)")]
-    Move(move_::Args),
-
-    #[arg(alias = "i", help = "Include file(s) in commit")]
-    Include(include::Args),
-
-    #[arg(alias = "x", help = "Exclude file(s) from commit")]
-    Exclude(exclude::Args),
-
-    #[arg(alias = "pu", help = "Push commit")]
-    Push(push::Args),
-
-    #[arg(alias = "po", help = "Pop commit")]
-    Pop(pop::Args),
-
-    #[arg(help = "Fold commit")]
-    Fold(fold::Args),
-
-    #[arg(help = "Hide commit")]
-    Hide(hide::Args),
-
-    #[arg(help = "Unhide commit")]
-    Unhide(unhide::Args),
-
-    #[arg(alias = "ls", alias = "l", help = "List commits")]
-    List(list::Args),
-
-    #[arg(alias = "res", help = "Resolve merge conflict")]
-    Resolve(resolve::Args),
-
-    #[arg(help = "Reset head")]
-    Reset(reset::Args),
-
-    #[arg(alias = "s", help = "Show commit")]
-    Show(show::Args),
-
-    #[arg(help = "Show version")]
-    Version(version::Args),
-}
-
 fn format_error(result: Result<()>) -> Result<()> {
     match result {
         Err(error) => {
@@ -164,40 +59,78 @@ fn format_error(result: Result<()>) -> Result<()> {
 }
 
 pub fn main() -> Result<()> {
-    let args = Args::from_env(Some("pk"));
+    let args = immargs!(
+        { bin: "pk" }
+        -r --repo <path> PathBuf   "Path to repository",
+        <command> [...]            "Command" {
+            init                   "Initialize repository",
+            clone                  "Clone repository",
+            fetch                  "Fetch remote commit(s)",
+            pull                   "Pull remote commit(s)",
+            bnew bn                "New branch",
+            bset b                 "Set branch",
+            brename br             "Rename branch",
+            bdelete bd             "Delete branch",
+            blist bls bl           "List branches",
+            bhide                  "Hide branch",
+            bunhde                 "Unhide branch",
+            new n                  "New commit",
+            delete del             "Delete commit",
+            refresh r              "Refresh commit",
+            message msg m          "Set commit message",
+            finalize fin           "Finalize commit(s)",
+            add a                  "Add file(s)",
+            remove rm              "Remove file(s)",
+            move_ mv               "Move file(s)",
+            include i              "Include file(s) in commit",
+            exclude x              "Exclude file(s) from commit",
+            push pu                "Push commit",
+            pop po                 "Pop commit",
+            fold                   "Fold commit",
+            hide                   "Hide commit",
+            unhide                 "Unhide commit",
+            list ls l              "List commits",
+            resolve res            "Resolve merge conflict",
+            reset                  "Reset head",
+            show s                 "Show commit",
+            version                "Show version",
+        }
+    );
+
     let path = args.repo.unwrap_or(env::current_dir()?);
 
     format_error(match args.command {
-        Command::Init(args) => init::main(&path, args),
-        Command::Clone(args) => clone::main(&path, args),
-        Command::Fetch(args) => fetch::main(&path, args),
-        Command::Pull(args) => fetch::pull_main(&path, args),
-        Command::Bnew(args) => bnew::main(&path, args),
-        Command::Bset(args) => bset::main(&path, args),
-        Command::Brename(args) => brename::main(&path, args),
-        Command::Bdelete(args) => bdelete::main(&path, args),
-        Command::Blist(args) => blist::main(&path, args),
-        Command::Bhide(args) => bhide::main(&path, args),
-        Command::Bunhide(args) => bunhide::main(&path, args),
-        Command::New(args) => new::main(&path, args),
-        Command::Delete(args) => delete::main(&path, args),
-        Command::Refresh(args) => refresh::main(&path, args),
-        Command::Message(args) => message::main(&path, args),
-        Command::Finalize(args) => finalize::main(&path, args),
-        Command::Add(args) => add::main(&path, args),
-        Command::Remove(args) => remove::main(&path, args),
-        Command::Move(args) => move_::main(&path, args),
-        Command::Include(args) => include::main(&path, args),
-        Command::Exclude(args) => exclude::main(&path, args),
-        Command::Push(args) => push::main(&path, args),
-        Command::Pop(args) => pop::main(&path, args),
-        Command::Fold(args) => fold::main(&path, args),
-        Command::Hide(args) => hide::main(&path, args),
-        Command::Unhide(args) => unhide::main(&path, args),
-        Command::List(args) => list::main(&path, args),
-        Command::Resolve(args) => resolve::main(&path, args),
-        Command::Reset(args) => reset::main(&path, args),
-        Command::Show(args) => show::main(&path, args),
-        Command::Version(args) => version::main(args),
+        ("init", args) => init::main(&path, args),
+        ("clone", args) => clone::main(&path, args),
+        ("fetch", args) => fetch::main(&path, args),
+        ("pull", args) => fetch::pull_main(&path, args),
+        ("bnew", args) => bnew::main(&path, args),
+        ("bset", args) => bset::main(&path, args),
+        ("brename", args) => brename::main(&path, args),
+        ("bdelete", args) => bdelete::main(&path, args),
+        ("blist", args) => blist::main(&path, args),
+        ("bhide", args) => bhide::main(&path, args),
+        ("bunhide", args) => bunhide::main(&path, args),
+        ("new", args) => new::main(&path, args),
+        ("delete", args) => delete::main(&path, args),
+        ("refresh", args) => refresh::main(&path, args),
+        ("message", args) => message::main(&path, args),
+        ("finalize", args) => finalize::main(&path, args),
+        ("add", args) => add::main(&path, args),
+        ("remove", args) => remove::main(&path, args),
+        ("move", args) => move_::main(&path, args),
+        ("include", args) => include::main(&path, args),
+        ("exclude", args) => exclude::main(&path, args),
+        ("push", args) => push::main(&path, args),
+        ("pop", args) => pop::main(&path, args),
+        ("fold", args) => fold::main(&path, args),
+        ("hide", args) => hide::main(&path, args),
+        ("unhide", args) => unhide::main(&path, args),
+        ("list", args) => list::main(&path, args),
+        ("resolve", args) => resolve::main(&path, args),
+        ("reset", args) => reset::main(&path, args),
+        ("show", args) => show::main(&path, args),
+        ("version", args) => version::main(args),
+        _ => unreachable!(),
     })
 }
