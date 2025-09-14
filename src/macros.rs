@@ -1,15 +1,17 @@
 #[macro_export]
 macro_rules! stdout {
-    ($($arg:tt)*) => {{
+    ($($args:tt)*) => {{
         use std::io::Write;
-        let _ = write!(std::io::stdout(), $($arg)*);
+        let mut stdout = std::io::stdout().lock();
+        let _ = write!(stdout, $($args)*);
     }};
 }
 
 #[macro_export]
 macro_rules! stderr {
-    ($($arg:tt)*) => {{
+    ($($args:tt)*) => {{
         use std::io::Write;
-        let _ = write!(std::io::stderr(), $($arg)*);
+        let mut stderr = std::io::stderr().lock();
+        let _ = write!(stderr, $($args)*);
     }};
 }
