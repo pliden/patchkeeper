@@ -1,18 +1,18 @@
-use crate::meta::Metadata;
 use crate::meta::HIDDEN;
+use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::BranchType;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    names: Vec<String>,
+immargs! {
+    BhideArgs,
+    -h --help   "print help message",
+    [<branch>...] String,
 }
 
 fn hide(repo: &Repository, meta: &Metadata, names: &[String]) -> Result<()> {
@@ -40,12 +40,12 @@ fn hide_current(repo: &Repository, meta: &Metadata) -> Result<()> {
     hide(repo, meta, &names)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: BhideArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if !args.names.is_empty() {
-        hide(&repo, &meta, &args.names)
+    if !args.branch.is_empty() {
+        hide(&repo, &meta, &args.branch)
     } else {
         hide_current(&repo, &meta)
     }

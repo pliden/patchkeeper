@@ -12,12 +12,18 @@ use git2::BranchType;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
 use git2::Repository;
-use immargs::Args;
 use immargs::immargs;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::str;
+
+immargs! {
+    FetchArgs,
+    -h --help   "print help message",
+    [<remote>] String,
+    [<refspecs>...] String,
+}
 
 fn fetch(repo: &Repository, remote: &str, refspecs: &[String]) -> Result<()> {
     let mut remote = repo
@@ -100,13 +106,7 @@ fn fetch(repo: &Repository, remote: &str, refspecs: &[String]) -> Result<()> {
     Ok(())
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
-    let args = immargs!(
-        { args }
-        [remote] String,
-        [refspecs...] String,
-    );
-
+pub fn main(path: &Path, args: FetchArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let remote = args.remote.as_deref().unwrap_or(repo::ORIGIN);
 
@@ -143,13 +143,7 @@ fn pull(repo: &Repository, meta: &Metadata, remote: &str, refspecs: &[String]) -
     Ok(())
 }
 
-pub fn pull_main(path: &Path, args: Args) -> Result<()> {
-    let args = immargs!(
-        { args }
-        [remote] String,
-        [refspecs...] String,
-    );
-
+pub fn pull_main(path: &Path, args: FetchArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
     let remote = args.remote.as_deref().unwrap_or(repo::ORIGIN);

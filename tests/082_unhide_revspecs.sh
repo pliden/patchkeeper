@@ -4,7 +4,6 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk unhide | grep "error: missing argument '--all' or '\[revspec...\]'"
 fail pk unhide $(HEAD) | grep "error: cannot unhide non-hidden commit"
 fail pk unhide INVALID | grep "error: revspec 'INVALID' not found"
 

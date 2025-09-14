@@ -22,6 +22,6 @@ assert $(metadata | popped | count) == 0
 assert $(metadata | pushed | count) == 1
 assert $(HEAD | summary) == A
 
-fail pk hide -n | grep "error: nothing to hide"
+fail pk hide -a | grep "error: nothing to hide"
 
 # End of file

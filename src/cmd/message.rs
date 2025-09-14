@@ -1,15 +1,15 @@
 use crate::meta::Metadata;
-use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
+use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    message: Vec<String>,
+immargs! {
+    MessageArgs,
+    -h --help   "print help message",
+    <message>... String,
 }
 
 fn message(repo: &Repository, meta: &Metadata, message: &[String]) -> Result<()> {
@@ -32,7 +32,7 @@ fn message(repo: &Repository, meta: &Metadata, message: &[String]) -> Result<()>
     meta.commit(repo, "message")
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: MessageArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 

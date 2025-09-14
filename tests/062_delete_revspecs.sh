@@ -4,7 +4,6 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk delete | grep "error: missing argument '--interactive' or '--next' or '\[revspec...\]'"
 fail pk delete $(HEAD) | grep "error: cannot delete non-popped commit"
 
 pk new A

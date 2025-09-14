@@ -1,21 +1,18 @@
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 use std::str;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(choice = "0", help = "Fold next commit")]
-    next: Option<()>,
-
-    #[arg(positional, choice = "0")]
-    revspec: Option<Vec<String>>,
+immargs! {
+    FoldArgs,
+    -h --help "print help message",
+    [<revspec>...] String,
 }
 
 fn fold(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -65,18 +62,16 @@ fn fold_next(repo: &Repository, meta: &Metadata) -> Result<()> {
     fold(repo, meta, &commits)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: FoldArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    if let Some(revspec) = &args.revspec {
-        fold_revspecs(&repo, &meta, revspec)
-    } else if args.next.is_some() {
-        fold_next(&repo, &meta)
+    if !args.revspec.is_empty() {
+        fold_revspecs(&repo, &meta, &args.revspec)
     } else {
-        panic!();
+        fold_next(&repo, &meta)
     }
 }

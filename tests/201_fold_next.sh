@@ -33,7 +33,7 @@ assert $(metadata | popped | count) == 2
 assert $(metadata | pushed | count) == 1
 assert $(HEAD | summary) == A
 
-pk fold -n
+pk fold
 
 assert $(metadata | popped | count) == 1
 assert $(metadata | pushed | count) == 1
@@ -42,7 +42,7 @@ grep A fileA
 grep B fileB
 fail test -f fileC
 
-pk fold -n
+pk fold
 
 assert $(metadata | popped | count) == 0
 assert $(metadata | pushed | count) == 1
@@ -51,6 +51,6 @@ grep A fileA
 grep B fileB
 grep C fileC
 
-fail pk fold -n | grep "error: nothing to fold"
+fail pk fold | grep "error: nothing to fold"
 
 # End of file

@@ -21,7 +21,7 @@ fail pk bdelete branch0 | grep "error: branch has patches and/or properties"
 
 pk bset branch0
 pk pop
-pk del -n
+pk del
 
 pk bset main
 pk bdelete branch0

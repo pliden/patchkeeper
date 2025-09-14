@@ -1,18 +1,18 @@
 use crate::meta::Metadata;
-use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
-use anyhow::bail;
+use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use anyhow::bail;
 use git2::IndexAddOption;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    path: Vec<PathBuf>,
+immargs! {
+    ExcludeArgs,
+    -h --help "print help message",
+    <path>... PathBuf,
 }
 
 fn exclude(repo: &Repository, meta: &Metadata, paths: &[PathBuf]) -> Result<()> {
@@ -54,7 +54,7 @@ fn exclude(repo: &Repository, meta: &Metadata, paths: &[PathBuf]) -> Result<()> 
     meta.commit(repo, "exclude")
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: ExcludeArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 

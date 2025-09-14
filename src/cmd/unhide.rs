@@ -1,20 +1,18 @@
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(choice = "0", help = "Unhide all commits")]
-    all: Option<()>,
-
-    #[arg(positional, choice = "0")]
-    revspec: Option<Vec<String>>,
+immargs! {
+    UnhideArgs,
+    -a --all              ! "unhide all commits",
+    -h --help               "print help message",
+    [<revspec>...] String !,
 }
 
 fn unhide(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -43,6 +41,10 @@ fn unhide(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> 
 }
 
 fn unhide_revspecs(repo: &Repository, meta: &Metadata, revspecs: &[String]) -> Result<()> {
+    if revspecs.is_empty() {
+        bail!("nothing to unhide");
+    }
+
     let commits = repo.find_commits_by_revspecs(revspecs)?;
     unhide(repo, meta, &commits)
 }
@@ -56,15 +58,13 @@ fn unhide_all(repo: &Repository, meta: &Metadata) -> Result<()> {
     unhide(repo, meta, &commits)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: UnhideArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if let Some(revspec) = args.revspec {
-        unhide_revspecs(&repo, &meta, &revspec)
-    } else if args.all.is_some() {
+    if args.all {
         unhide_all(&repo, &meta)
     } else {
-        panic!();
+        unhide_revspecs(&repo, &meta, &args.revspec)
     }
 }

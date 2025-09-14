@@ -1,7 +1,7 @@
 use crate::repo::BranchUtils;
 use crate::repo::CommitUtils;
-use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
+use crate::repo::RepositoryUtils;
 use crate::stdout;
 use anyhow::Result;
 use colored::Colorize;
@@ -13,17 +13,15 @@ use git2::DiffLine;
 use git2::DiffLineType;
 use git2::Oid;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::collections::HashMap;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(help = "Show files only")]
-    files: bool,
-
-    #[arg(positional)]
-    revspec: Option<String>,
+immargs! {
+    ShowArgs,
+    -f --files "show files only",
+    -h --help  "print help message",
+    [<revspec>] String,
 }
 
 pub type BranchMap = HashMap<Oid, BranchInfo>;
@@ -139,7 +137,7 @@ fn print_diff(repo: &Repository, commit: &Commit, format: DiffFormat) -> Result<
     Ok(())
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: ShowArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let revspec = args.revspec.unwrap_or(String::from(HEAD));
     let commit = repo.find_commit_by_revspec(&revspec)?;

@@ -1,6 +1,6 @@
+use anyhow::Result;
 use anyhow::anyhow;
 use anyhow::bail;
-use anyhow::Result;
 use chrono::DateTime;
 use chrono::Local;
 use git2::Branch;
@@ -30,9 +30,9 @@ pub trait RepositoryUtils {
     fn path_relative_to_workdir(&self, path: &Path) -> Result<PathBuf>;
     fn paths_relative_to_workdir(&self, paths: &[PathBuf]) -> Result<Vec<PathBuf>>;
     fn head_name(&self) -> Result<String>;
-    fn find_commits(&self, oids: &[Oid]) -> Result<Vec<Commit>>;
-    fn find_commit_by_revspec(&self, revspec: &str) -> Result<Commit>;
-    fn find_commits_by_revspecs(&self, revspecs: &[String]) -> Result<Vec<Commit>>;
+    fn find_commits(&self, oids: &[Oid]) -> Result<Vec<Commit<'_>>>;
+    fn find_commit_by_revspec(&self, revspec: &str) -> Result<Commit<'_>>;
+    fn find_commits_by_revspecs(&self, revspecs: &[String]) -> Result<Vec<Commit<'_>>>;
     fn reset_hard(&self, head: &Commit) -> Result<()>;
     fn amend_head(&self, index: &mut Index) -> Result<Oid>;
 }
@@ -114,7 +114,7 @@ impl RepositoryUtils for Repository {
         Branch::wrap(reference).short_name()
     }
 
-    fn find_commits(&self, oids: &[Oid]) -> Result<Vec<Commit>> {
+    fn find_commits(&self, oids: &[Oid]) -> Result<Vec<Commit<'_>>> {
         let mut commits = vec![];
         for oid in oids.iter().copied() {
             commits.push(self.find_commit(oid)?);
@@ -122,11 +122,11 @@ impl RepositoryUtils for Repository {
         Ok(commits)
     }
 
-    fn find_commit_by_revspec(&self, revspec: &str) -> Result<Commit> {
+    fn find_commit_by_revspec(&self, revspec: &str) -> Result<Commit<'_>> {
         Ok(self.revparse_single(revspec)?.peel_to_commit()?)
     }
 
-    fn find_commits_by_revspecs(&self, revspecs: &[String]) -> Result<Vec<Commit>> {
+    fn find_commits_by_revspecs(&self, revspecs: &[String]) -> Result<Vec<Commit<'_>>> {
         let mut commits = vec![];
         for revspec in revspecs {
             commits.push(self.find_commit_by_revspec(revspec)?);

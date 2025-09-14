@@ -2,12 +2,15 @@ use crate::meta::Metadata;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::Repository;
-use immargs::Args;
 use immargs::immargs;
 use std::path::Path;
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
-    let _ = immargs!({ args });
+immargs! {
+    InitArgs,
+    -h --help   "print help message",
+}
+
+pub fn main(path: &Path, _args: InitArgs) -> Result<()> {
     let repo = Repository::initialize(path)?;
     let meta = Metadata::open(&repo)?;
 

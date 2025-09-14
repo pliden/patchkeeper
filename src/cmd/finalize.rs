@@ -1,14 +1,16 @@
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {}
+immargs! {
+    FinalizeArgs,
+    -h --help   "print help message",
+}
 
 fn finalize(repo: &Repository, meta: &Metadata) -> Result<()> {
     let name = repo.head_name()?;
@@ -29,7 +31,7 @@ fn finalize(repo: &Repository, meta: &Metadata) -> Result<()> {
     meta.commit(repo, "finalize")
 }
 
-pub fn main(path: &Path, _args: Args) -> Result<()> {
+pub fn main(path: &Path, _args: FinalizeArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 

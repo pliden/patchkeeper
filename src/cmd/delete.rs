@@ -2,23 +2,18 @@ use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
 use crate::ui;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(choice = "0", help = "Interactive mode")]
-    interactive: Option<()>,
-
-    #[arg(choice = "0", help = "Delete next commit")]
-    next: Option<()>,
-
-    #[arg(positional, choice = "0")]
-    revspec: Option<Vec<String>>,
+immargs! {
+    DeleteArgs,
+    -i --interactive      ! "interactive mode",
+    -h --help               "print help message",
+    [<revspec>...] String !,
 }
 
 fn delete(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -79,17 +74,15 @@ fn delete_next(repo: &Repository, meta: &Metadata) -> Result<()> {
     delete(repo, meta, &commits)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: DeleteArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if args.interactive.is_some() {
+    if args.interactive {
         delete_interactive(&repo, &meta)
-    } else if let Some(revspec) = &args.revspec {
-        delete_revspecs(&repo, &meta, revspec)
-    } else if args.next.is_some() {
-        delete_next(&repo, &meta)
+    } else if !args.revspec.is_empty() {
+        delete_revspecs(&repo, &meta, &args.revspec)
     } else {
-        panic!();
+        delete_next(&repo, &meta)
     }
 }

@@ -1,23 +1,19 @@
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(choice = "0", help = "Hide all commits")]
-    all: Option<()>,
+immargs! {
+    HideArgs,
+    -a --all              ! "hide all commits",
+    -h --help               "print help message",
+    [<revspec>...] String !,
 
-    #[arg(choice = "0", help = "Hide next commit")]
-    next: Option<()>,
-
-    #[arg(positional, choice = "0")]
-    revspec: Option<Vec<String>>,
 }
 
 fn hide(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -68,17 +64,15 @@ fn hide_next(repo: &Repository, meta: &Metadata) -> Result<()> {
     hide(repo, meta, &commits)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: HideArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if let Some(revspec) = &args.revspec {
-        hide_revspecs(&repo, &meta, revspec)
-    } else if args.all.is_some() {
+    if args.all {
         hide_all(&repo, &meta)
-    } else if args.next.is_some() {
-        hide_next(&repo, &meta)
+    } else if !args.revspec.is_empty() {
+        hide_revspecs(&repo, &meta, &args.revspec)
     } else {
-        panic!();
+        hide_next(&repo, &meta)
     }
 }

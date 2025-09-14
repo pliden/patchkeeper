@@ -4,8 +4,8 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk move | grep "error: missing argument '<path...>'"
-fail pk move INVALID | grep "error: must specify at least two paths"
+fail pk move | grep "error: missing argument '<src>...'"
+fail pk move INVALID | grep "error: missing argument '<dest>'"
 fail pk move INVALID INVALID | grep "error: file not found: INVALID"
 
 pk new A
@@ -19,7 +19,7 @@ INDEX | grep "^file0$"
 INDEX | grep "^file1$"
 INDEX | grep "^file2$"
 
-fail pk move file0 file1 file2 | grep "error: last path must be a directory"
+fail pk move file0 file1 file2 | grep "error: destination must be a directory"
 
 pk move file0 file10
 assert $(INDEX | count) == 3

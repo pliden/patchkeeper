@@ -1,12 +1,14 @@
 use crate::stdout;
 use anyhow::Result;
-use immargs::Args;
 use immargs::immargs;
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+immargs! {
+    VersionArgs,
+    -h --help "print help message",
+}
 
-pub fn main(args: Args) -> Result<()> {
-    let _ = immargs!({ args });
+pub fn main(_args: VersionArgs) -> Result<()> {
+    const VERSION: &str = env!("CARGO_PKG_VERSION");
     stdout!("patchkeeper {VERSION}\n");
     Ok(())
 }

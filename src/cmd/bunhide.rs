@@ -1,17 +1,17 @@
-use crate::meta::Metadata;
 use crate::meta::HIDDEN;
+use crate::meta::Metadata;
 use crate::print;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::BranchType;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    names: Vec<String>,
+immargs! {
+    BunhideArgs,
+    -h --help   "print help message",
+    <branch>... String,
 }
 
 fn unhide(repo: &Repository, meta: &Metadata, names: &[String]) -> Result<()> {
@@ -34,9 +34,9 @@ fn unhide(repo: &Repository, meta: &Metadata, names: &[String]) -> Result<()> {
     Ok(())
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: BunhideArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    unhide(&repo, &meta, &args.names)
+    unhide(&repo, &meta, &args.branch)
 }

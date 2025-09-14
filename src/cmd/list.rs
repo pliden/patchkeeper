@@ -1,5 +1,5 @@
-use crate::meta::Metadata;
 use crate::meta::HIDDEN;
+use crate::meta::Metadata;
 use crate::print;
 use crate::repo::BranchUtils;
 use crate::repo::CommitUtils;
@@ -11,19 +11,15 @@ use colored::Colorize;
 use git2::BranchType;
 use git2::Oid;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(conflict = "0", help = "Show all branches")]
-    all: Option<()>,
-
-    #[arg(short = 'x', help = "Show hidden commit")]
-    hidden: Option<()>,
-
-    #[arg(positional, conflict = "0")]
-    branch: Option<Vec<String>>,
+immargs! {
+    ListArgs,
+    -a --all             ! "show all branches",
+    -x --hidden          ! "show hidden commit",
+    -h --help              "print help message",
+    [<branch>...] String !,
 }
 
 fn print_branch(name: &str, is_hidden: bool, color: Color) {
@@ -100,15 +96,15 @@ fn list_current(repo: &Repository, meta: &Metadata, hidden: bool) -> Result<()> 
     list(repo, meta, &names, hidden)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: ListArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if let Some(names) = &args.branch {
-        list(&repo, &meta, names, args.hidden.is_some())
-    } else if args.all.is_some() {
-        list_all(&repo, &meta, args.hidden.is_some())
+    if !args.branch.is_empty() {
+        list(&repo, &meta, &args.branch, args.hidden)
+    } else if args.all {
+        list_all(&repo, &meta, args.hidden)
     } else {
-        list_current(&repo, &meta, args.hidden.is_some())
+        list_current(&repo, &meta, args.hidden)
     }
 }

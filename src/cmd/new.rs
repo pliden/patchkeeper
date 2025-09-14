@@ -1,24 +1,24 @@
 use crate::meta::Metadata;
 use crate::print;
-use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
-use anyhow::bail;
+use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Error;
 use git2::ErrorClass;
 use git2::ErrorCode;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    message: Vec<String>,
+immargs! {
+    NewArgs,
+    -h --help   "print help message",
+    <message>... String,
 }
 
-fn resolve_head(repo: &Repository) -> Result<Option<Commit>> {
+fn resolve_head(repo: &Repository) -> Result<Option<Commit<'_>>> {
     fn is_reference_unborn_branch(error: &Error) -> bool {
         error.class() == ErrorClass::Reference && error.code() == ErrorCode::UnbornBranch
     }
@@ -61,7 +61,7 @@ fn new(repo: &Repository, meta: &Metadata, message: &[String]) -> Result<()> {
     meta.commit(repo, "new")
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: NewArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 

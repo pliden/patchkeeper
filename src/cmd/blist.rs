@@ -1,5 +1,5 @@
-use crate::meta::Metadata;
 use crate::meta::HIDDEN;
+use crate::meta::Metadata;
 use crate::print;
 use crate::repo::BranchUtils;
 use crate::stdout;
@@ -7,16 +7,14 @@ use anyhow::Result;
 use colored::Colorize;
 use git2::BranchType;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(help = "Show remote branches")]
-    remote: Option<()>,
-
-    #[arg(short = 'x', help = "Show hidden branches")]
-    hidden: Option<()>,
+immargs! {
+    BlistArgs,
+    -r --remote   "show remote branches",
+    -x --hidden   "show hidden branches",
+    -h --help     "print help message",
 }
 
 fn is_branch_hidden(meta: &Metadata, name: &str) -> Result<bool> {
@@ -44,9 +42,9 @@ fn list(repo: &Repository, meta: &Metadata, remote: bool, hidden: bool) -> Resul
     Ok(())
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: BlistArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    list(&repo, &meta, args.remote.is_some(), args.hidden.is_some())
+    list(&repo, &meta, args.remote, args.hidden)
 }

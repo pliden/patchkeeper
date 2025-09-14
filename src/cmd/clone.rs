@@ -5,13 +5,18 @@ use git2::FetchOptions;
 use git2::RemoteCallbacks;
 use git2::build::CheckoutBuilder;
 use git2::build::RepoBuilder;
-use immargs::Args;
 use immargs::immargs;
 use std::io;
 use std::io::Write;
-use std::path::Path;
 use std::path::PathBuf;
 use std::str;
+
+immargs! {
+    CloneArgs,
+    -h --help   "print help message",
+    <url> String,
+    [<path>] PathBuf,
+}
 
 fn clone(url: &str, path: Option<PathBuf>) -> Result<()> {
     let path = match path {
@@ -88,12 +93,6 @@ fn clone(url: &str, path: Option<PathBuf>) -> Result<()> {
     Ok(())
 }
 
-pub fn main(_path: &Path, args: Args) -> Result<()> {
-    let args = immargs!(
-        { args }
-        <url> String     "Repository to clone",
-        [path] PathBuf   "Destination directory",
-    );
-
+pub fn main(args: CloneArgs) -> Result<()> {
     clone(&args.url, args.path)
 }

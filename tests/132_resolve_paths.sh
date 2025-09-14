@@ -4,7 +4,7 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk resolve | grep "error: missing argument '--all' or '--list' or '--undo' or '\[path...\]'"
+fail pk resolve | grep "error: nothing to resolve"
 
 pk new A
 echo "VERSION A0" > file0

@@ -1,20 +1,18 @@
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::BranchType;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(help = "Force delete")]
-    force: Option<()>,
-
-    #[arg(positional)]
-    branch: String,
+immargs! {
+    BdeleteArgs,
+    -f --force   "force delete",
+    -h --help    "print help message",
+    <branch> String,
 }
 
 fn delete(repo: &Repository, meta: &Metadata, name: &str, force: bool) -> Result<()> {
@@ -34,9 +32,9 @@ fn delete(repo: &Repository, meta: &Metadata, name: &str, force: bool) -> Result
     meta.commit(repo, "bdelete")
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: BdeleteArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    delete(&repo, &meta, &args.branch, args.force.is_some())
+    delete(&repo, &meta, &args.branch, args.force)
 }

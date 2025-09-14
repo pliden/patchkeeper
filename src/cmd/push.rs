@@ -1,32 +1,24 @@
 use crate::meta::Metadata;
 use crate::print;
-use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
-use anyhow::bail;
+use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
 use git2::Signature;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 use std::str;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(conflict = "0", help = "Push all commits")]
-    all: Option<()>,
-
-    #[arg(long = "move", meta = "revspec", conflict = "0", help = "Move commit")]
-    move_: Option<String>,
-
-    #[arg(meta = "revspec", conflict = "0", help = "Graft commit")]
-    graft: Option<String>,
-
-    #[arg(meta = "revspec", conflict = "0", help = "Backout commit")]
-    backout: Option<String>,
-
-    #[arg(positional, conflict = "0")]
-    revspec: Option<String>,
+immargs! {
+    PushArgs,
+    -a --all                      ! "push all commits",
+    -m --move_ <revspec> String   ! "move commit",
+    -g --graft <revspec> String   ! "graft commit",
+    -b --backout <revspec> String ! "backout commit",
+    -h --help                       "print help message",
+    [<revspec>] String            !,
 }
 
 #[derive(Copy, Clone)]
@@ -215,16 +207,14 @@ fn push_next(repo: &Repository, meta: &Metadata) -> Result<()> {
     push(repo, meta, &commits, PushOp::Normal)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: PushArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    if let Some(revspec) = args.revspec {
-        push_revspec(&repo, &meta, &revspec)
-    } else if args.all.is_some() {
+    if args.all {
         push_all(&repo, &meta)
     } else if let Some(revspec) = args.move_ {
         push_move(&repo, &meta, &revspec)
@@ -232,6 +222,8 @@ pub fn main(path: &Path, args: Args) -> Result<()> {
         push_graft(&repo, &meta, &revspec)
     } else if let Some(revspec) = args.backout {
         push_backout(&repo, &meta, &revspec)
+    } else if let Some(revspec) = args.revspec {
+        push_revspec(&repo, &meta, &revspec)
     } else {
         push_next(&repo, &meta)
     }

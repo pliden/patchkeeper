@@ -1,10 +1,12 @@
 [package]
-name = "pk"
+name = "patchkeeper"
 version = "2.0.0"
-edition = "2024"
 authors = ["Per Liden <per@malloc.se>"]
+edition = "2024"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "pk"
+path = "src/main.rs"
 
 [dependencies]
 anyhow = "1.0"

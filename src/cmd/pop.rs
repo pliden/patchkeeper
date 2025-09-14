@@ -1,23 +1,19 @@
 use crate::meta::Metadata;
 use crate::print;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(conflict = "0", help = "Pop all commits")]
-    all: Option<()>,
-
-    #[arg(conflict = "0", help = "Pop finalized commit")]
-    finalized: Option<()>,
-
-    #[arg(positional, conflict = "0")]
-    revspec: Option<String>,
+immargs! {
+    PopArgs,
+    -a --all           ! "pop all commits",
+    -f --finalized     ! "pop finalized commit",
+    -h --help            "print help message",
+    [<revspec>] String !,
 }
 
 fn pop(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -98,19 +94,19 @@ fn pop_next(repo: &Repository, meta: &Metadata) -> Result<()> {
     pop(repo, meta, &commits)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: PopArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
     repo.ensure_no_unresolved()?;
     repo.ensure_no_unrefreshed()?;
 
-    if let Some(revspec) = args.revspec {
-        pop_revspec(&repo, &meta, &revspec)
-    } else if args.all.is_some() {
+    if args.all {
         pop_all(&repo, &meta)
-    } else if args.finalized.is_some() {
+    } else if args.finalized {
         pop_finalized(&repo, &meta)
+    } else if let Some(revspec) = args.revspec {
+        pop_revspec(&repo, &meta, &revspec)
     } else {
         pop_next(&repo, &meta)
     }

@@ -1,23 +1,19 @@
 use crate::meta::Metadata;
-use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
-use anyhow::bail;
+use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Repository;
 use git2::Signature;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(help = "Mark all merge conflicts as resolved")]
-    resolve: Option<()>,
-
-    #[arg(help = "Update author")]
-    author: Option<()>,
-
-    #[arg(help = "Update comitter")]
-    committer: Option<()>,
+immargs! {
+    RefreshArgs,
+    -r --resolve     "mark all merge conflicts as resolved",
+    -a --author      "update author",
+    -c --committer   "update comitter",
+    -h --help        "print help message",
 }
 
 fn refresh(repo: &Repository, meta: &Metadata, author: bool, committer: bool) -> Result<()> {
@@ -57,18 +53,13 @@ fn refresh(repo: &Repository, meta: &Metadata, author: bool, committer: bool) ->
     meta.commit(repo, "refresh")
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: RefreshArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if args.resolve.is_none() {
+    if !args.resolve {
         repo.ensure_no_unresolved()?;
     }
 
-    refresh(
-        &repo,
-        &meta,
-        args.author.is_some(),
-        args.committer.is_some(),
-    )
+    refresh(&repo, &meta, args.author, args.committer)
 }

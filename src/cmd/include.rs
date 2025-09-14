@@ -1,18 +1,18 @@
 use crate::meta::Metadata;
-use crate::repo::RepositoryUtils;
 use crate::repo::HEAD;
-use anyhow::bail;
+use crate::repo::RepositoryUtils;
 use anyhow::Result;
+use anyhow::bail;
 use git2::IndexAddOption;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    path: Vec<PathBuf>,
+immargs! {
+    IncludeArgs,
+    -h --help "print help message",
+    <path>... PathBuf,
 }
 
 fn include(repo: &Repository, meta: &Metadata, paths: &[PathBuf]) -> Result<()> {
@@ -57,7 +57,7 @@ fn include(repo: &Repository, meta: &Metadata, paths: &[PathBuf]) -> Result<()> 
     meta.commit(repo, "include")
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: IncludeArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 

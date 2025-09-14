@@ -3,29 +3,23 @@ use crate::print;
 use crate::repo::IndexUtils;
 use crate::repo::RepositoryUtils;
 use crate::stdout;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(choice = "0", help = "Mark all merge conflicts as resolved")]
-    all: Option<()>,
-
-    #[arg(choice = "0", help = "List unresolved merge conflicts")]
-    list: Option<()>,
-
-    #[arg(choice = "0", help = "Undo push causing current merge conflict")]
-    undo: Option<()>,
-
-    #[arg(positional, choice = "0")]
-    path: Option<Vec<PathBuf>>,
+immargs! {
+    ResolveArgs,
+    -a --all            ! "mark all merge conflicts as resolved",
+    -l --list           ! "list unresolved merge conflicts",
+    -u --undo           ! "undo push causing current merge conflict",
+    -h --help             "print help message",
+    [<path>...] PathBuf !,
 }
 
-fn resolve(repo: &Repository, paths: Option<&Vec<PathBuf>>) -> Result<()> {
+fn resolve(repo: &Repository, paths: Option<Vec<PathBuf>>) -> Result<()> {
     let mut index = repo.index()?;
     let conflicts = index.unresolved_conflicts()?;
 
@@ -34,7 +28,7 @@ fn resolve(repo: &Repository, paths: Option<&Vec<PathBuf>>) -> Result<()> {
     }
 
     let relative_paths = match paths {
-        Some(paths) => Some(repo.paths_relative_to_workdir(paths)?),
+        Some(paths) => Some(repo.paths_relative_to_workdir(&paths)?),
         _ => None,
     };
 
@@ -85,19 +79,17 @@ fn undo(repo: &Repository, meta: &Metadata) -> Result<()> {
     meta.commit(repo, "undo")
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: ResolveArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 
-    if let Some(path) = args.path {
-        resolve(&repo, Some(&path))
-    } else if args.all.is_some() {
+    if args.all {
         resolve(&repo, None)
-    } else if args.list.is_some() {
+    } else if args.list {
         list(&repo)
-    } else if args.undo.is_some() {
+    } else if args.undo {
         undo(&repo, &meta)
     } else {
-        panic!();
+        resolve(&repo, Some(args.path))
     }
 }

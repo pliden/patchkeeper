@@ -1,16 +1,16 @@
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    path: Vec<PathBuf>,
+immargs! {
+    RemoveArgs,
+    -h --help "print help message",
+    <path>... PathBuf,
 }
 
 pub fn remove_empty_parent_dirs(path: &Path) {
@@ -40,7 +40,7 @@ fn remove_paths(repo: &Repository, paths: &[PathBuf]) -> Result<()> {
     Ok(())
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: RemoveArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
 
     repo.ensure_no_unresolved()?;

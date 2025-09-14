@@ -1,15 +1,15 @@
 use crate::meta::Metadata;
 use crate::repo::RepositoryUtils;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::path::Path;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    revspec: String,
+immargs! {
+    ResetArgs,
+    -h --help "print help message",
+    <revspec> String,
 }
 
 fn reset(repo: &Repository, meta: &Metadata, revspec: &str) -> Result<()> {
@@ -24,7 +24,7 @@ fn reset(repo: &Repository, meta: &Metadata, revspec: &str) -> Result<()> {
     repo.reset_hard(&commit)
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: ResetArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
     let meta = Metadata::open(&repo)?;
 

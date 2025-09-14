@@ -4,9 +4,14 @@ use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::BranchType;
 use git2::Repository;
-use immargs::Args;
 use immargs::immargs;
 use std::path::Path;
+
+immargs!(
+    BsetArgs,
+    -h --help   "print help message",
+    <branch> String,
+);
 
 fn set(repo: &Repository, name: &str) -> Result<()> {
     let branch = repo.find_branch(name, BranchType::Local)?;
@@ -18,12 +23,7 @@ fn set(repo: &Repository, name: &str) -> Result<()> {
     Ok(())
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
-    let args = immargs!(
-        { args }
-        <branch> String   "Branch name",
-    );
-
+pub fn main(path: &Path, args: BsetArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
 
     repo.ensure_no_unresolved()?;

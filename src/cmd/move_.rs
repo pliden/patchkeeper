@@ -1,28 +1,29 @@
 use crate::cmd::remove::remove_empty_parent_dirs;
 use crate::repo::RepositoryUtils;
+use anyhow::Result;
 use anyhow::anyhow;
 use anyhow::bail;
-use anyhow::Result;
 use git2::Repository;
-use immargs::ImmArgs;
+use immargs::immargs;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::str;
 
-#[derive(ImmArgs)]
-pub struct Args {
-    #[arg(positional)]
-    path: Vec<PathBuf>,
+immargs! {
+    MoveArgs,
+    -h --help "print help message",
+    <src>... PathBuf,
+    <dest> PathBuf,
 }
 
-fn move_to_file(repo: &Repository, from_file: &Path, to_file: &Path) -> Result<()> {
-    let relative_from_path = repo.path_relative_to_workdir(from_file)?;
+fn move_to_file(repo: &Repository, src_file: &Path, dest_file: &Path) -> Result<()> {
+    let relative_from_path = repo.path_relative_to_workdir(src_file)?;
 
-    fs::rename(from_file, to_file)?;
-    remove_empty_parent_dirs(from_file);
+    fs::rename(src_file, dest_file)?;
+    remove_empty_parent_dirs(src_file);
 
-    let relative_to_path = repo.path_relative_to_workdir(to_file)?;
+    let relative_to_path = repo.path_relative_to_workdir(dest_file)?;
 
     let mut index = repo.index()?;
     index.remove_path(&relative_from_path)?;
@@ -30,41 +31,35 @@ fn move_to_file(repo: &Repository, from_file: &Path, to_file: &Path) -> Result<(
     Ok(index.write()?)
 }
 
-fn move_to_dir(repo: &Repository, from_file: &Path, to_dir: &Path) -> Result<()> {
-    let file_name = from_file
+fn move_to_dir(repo: &Repository, src_file: &Path, to_dir: &Path) -> Result<()> {
+    let file_name = src_file
         .file_name()
-        .ok_or(anyhow!("file not found: {}", from_file.display()))?;
+        .ok_or(anyhow!("file not found: {}", src_file.display()))?;
     let mut to_file = to_dir.to_path_buf();
     to_file.push(file_name);
-    move_to_file(repo, from_file, &to_file)
+    move_to_file(repo, src_file, &to_file)
 }
 
-fn move_paths(repo: &Repository, paths: &[PathBuf]) -> Result<()> {
-    let (to, from) = paths.split_last().unwrap();
-
-    if from.is_empty() {
-        bail!("must specify at least two paths");
+fn move_(repo: &Repository, src: &[PathBuf], dest: &Path) -> Result<()> {
+    if src.len() > 1 && !dest.is_dir() {
+        bail!("destination must be a directory");
     }
 
-    if from.len() > 1 && !to.is_dir() {
-        bail!("last path must be a directory");
-    }
-
-    for path in from {
-        if to.is_dir() {
-            move_to_dir(repo, path, to)?;
+    for src_file in src {
+        if dest.is_dir() {
+            move_to_dir(repo, src_file, dest)?;
         } else {
-            move_to_file(repo, path, to)?;
+            move_to_file(repo, src_file, dest)?;
         }
     }
 
     Ok(())
 }
 
-pub fn main(path: &Path, args: Args) -> Result<()> {
+pub fn main(path: &Path, args: MoveArgs) -> Result<()> {
     let repo = Repository::discover(path)?;
 
     repo.ensure_no_unresolved()?;
 
-    move_paths(&repo, &args.path)
+    move_(&repo, &args.src, &args.dest)
 }
