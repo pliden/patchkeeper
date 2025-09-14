@@ -32,7 +32,6 @@ mod reset;
 mod resolve;
 mod show;
 mod unhide;
-mod version;
 
 immargs! {
     MainArgs,
@@ -70,7 +69,6 @@ immargs! {
         resolve res            "resolve merge conflict",
         reset                  "reset head",
         show s                 "show commit",
-        version                "show version",
     }
 }
 
@@ -109,6 +107,5 @@ pub fn main() -> Result<()> {
         Command::Resolve(args) => resolve::main(&path, args.into()),
         Command::Reset(args) => reset::main(&path, args.into()),
         Command::Show(args) => show::main(&path, args.into()),
-        Command::Version(args) => version::main(args.into()),
     }
 }
