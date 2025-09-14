@@ -1,8 +1,6 @@
 use anyhow::Result;
-use anyhow::anyhow;
 use immargs::immargs;
-use std::env;
-use std::io;
+use std::env::current_dir;
 use std::path::PathBuf;
 
 mod add;
@@ -76,33 +74,11 @@ immargs! {
     }
 }
 
-fn format_error(result: Result<()>) -> Result<()> {
-    match result {
-        Err(error) => {
-            if let Some(error) = error.downcast_ref::<io::Error>() {
-                let message = error.to_string();
-                let trimmed = message
-                    .split_once(" (os error")
-                    .map(|(first, _)| first)
-                    .unwrap_or(&message)
-                    .to_lowercase();
-                Err(anyhow!(trimmed))
-            } else if let Some(error) = error.downcast_ref::<git2::Error>() {
-                let trimmed = error.message().trim_end_matches('.').to_string();
-                Err(anyhow!(trimmed))
-            } else {
-                Err(error)
-            }
-        }
-        _ => result,
-    }
-}
-
 pub fn main() -> Result<()> {
     let args = MainArgs::from_env();
-    let path = args.repo.unwrap_or(env::current_dir()?);
+    let path = args.repo.unwrap_or(current_dir()?);
 
-    format_error(match args.command {
+    match args.command {
         Command::Init(args) => init::main(&path, args.into()),
         Command::Clone(args) => clone::main(args.into()),
         Command::Fetch(args) => fetch::main(&path, args.into()),
@@ -134,5 +110,5 @@ pub fn main() -> Result<()> {
         Command::Reset(args) => reset::main(&path, args.into()),
         Command::Show(args) => show::main(&path, args.into()),
         Command::Version(args) => version::main(args.into()),
-    })
+    }
 }
