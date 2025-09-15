@@ -12,11 +12,11 @@ use std::path::PathBuf;
 
 immargs! {
     ResolveArgs,
-    -a --all            ! "mark all merge conflicts as resolved",
-    -l --list           ! "list unresolved merge conflicts",
-    -u --undo           ! "undo push causing current merge conflict",
+    -a --all            ? "mark all merge conflicts as resolved",
+    -l --list           ? "list unresolved merge conflicts",
+    -u --undo           ? "undo push causing current merge conflict",
     -h --help             "print help message",
-    [<path>...] PathBuf !,
+    [<path>...] PathBuf ?,
 }
 
 fn resolve(repo: &Repository, paths: Option<Vec<PathBuf>>) -> Result<()> {

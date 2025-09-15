@@ -1,6 +1,5 @@
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
-use anyhow::bail;
 use git2::IndexAddOption;
 use git2::Repository;
 use immargs::immargs;
@@ -9,9 +8,9 @@ use std::path::PathBuf;
 
 immargs! {
     AddArgs,
-    -a --all            ! "add all untracked files",
+    -a --all            ? "add all untracked files",
     -h --help             "print help message",
-    [<path>...] PathBuf !,
+    [<path>...] PathBuf ?,
 }
 
 fn add(repo: &Repository, paths: &[PathBuf]) -> Result<()> {
@@ -25,10 +24,6 @@ fn add_all(repo: &Repository) -> Result<()> {
 }
 
 fn add_paths(repo: &Repository, paths: &[PathBuf]) -> Result<()> {
-    if paths.is_empty() {
-        bail!("nothing to add");
-    }
-
     let relative_paths = repo.paths_relative_to_workdir(paths)?;
     add(repo, &relative_paths)
 }

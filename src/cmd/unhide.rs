@@ -10,9 +10,9 @@ use std::path::Path;
 
 immargs! {
     UnhideArgs,
-    -a --all              ! "unhide all commits",
+    -a --all              ? "unhide all commits",
     -h --help               "print help message",
-    [<revspec>...] String !,
+    [<revspec>...] String ?,
 }
 
 fn unhide(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> {
@@ -41,10 +41,6 @@ fn unhide(repo: &Repository, meta: &Metadata, commits: &[Commit]) -> Result<()> 
 }
 
 fn unhide_revspecs(repo: &Repository, meta: &Metadata, revspecs: &[String]) -> Result<()> {
-    if revspecs.is_empty() {
-        bail!("nothing to unhide");
-    }
-
     let commits = repo.find_commits_by_revspecs(revspecs)?;
     unhide(repo, meta, &commits)
 }

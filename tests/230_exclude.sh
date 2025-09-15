@@ -3,7 +3,7 @@
 pk exclude -h | usage exclude
 pk x -h | usage exclude
 
-fail pk exclude | grep "error: missing argument '<path>...'"
+fail pk exclude | grep "error: missing argument '<path>'"
 
 pk init
 pk new INITIAL
