@@ -2,7 +2,7 @@ __NOTE! PatchKeeper version 2.0 is still work in progress__
 
 # PatchKeeper
 
-[![Build & Test](https://github.com/pliden/patchkeeper/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/pliden/patchkeeper/actions/workflows/build-and-test.yaml)
+[![Build & Test](https://github.com/pliden/patchkeeper/actions/workflows/build-test.yaml/badge.svg)](https://github.com/pliden/patchkeeper/actions/workflows/build-test.yaml)
 
 PatchKeeper (`pk`) is a [Git](https://git-scm.com/) command-line tool, with
 first-class support for stack based patch management. It helps you manage

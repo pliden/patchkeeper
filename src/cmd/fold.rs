@@ -7,7 +7,6 @@ use git2::Commit;
 use git2::Repository;
 use immargs::immargs;
 use std::path::Path;
-use std::str;
 
 immargs! {
     FoldArgs,
