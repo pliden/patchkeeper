@@ -508,13 +508,17 @@ dependencies = [
 [[package]]
 name = "immargs"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b81a4779a5f5efa0c7864c7035f2de1359803ac4f3913b6b1876461ca87393e"
 dependencies = [
- "immargs_macro",
+ "immargs_macros",
 ]
 
 [[package]]
-name = "immargs_macro"
+name = "immargs_macros"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a015d143a43845183a8e68c510bcf25c7986364c743fe02607091eb8da44f8a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -754,7 +758,7 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "patchkeeper"
-version = "2.0.0"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",

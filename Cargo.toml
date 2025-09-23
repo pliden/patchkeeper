@@ -1,6 +1,6 @@
 [package]
 name = "patchkeeper"
-version = "2.0.0"
+version = "0.1.0"
 authors = ["Per Liden <per@malloc.se>"]
 edition = "2024"
 
@@ -15,8 +15,8 @@ colored = "3.0"
 ratatui = "0.29"
 crossterm = "0.29"
 itertools = "0.14"
+immargs = "0.1"
 git2 = { version = "0.20", features = ["vendored-libgit2"] }
-immargs = { path = "../immargs" }
 
 [patch.crates-io]
 git2 = { git = 'https://github.com/pliden/git2-rs.git' }
