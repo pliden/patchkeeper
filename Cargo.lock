@@ -307,8 +307,8 @@ dependencies = [
 
 [[package]]
 name = "git2"
-version = "0.20.1"
-source = "git+https://github.com/pliden/git2-rs.git#d09306837f876c84c2ef43660abf688ec5193c81"
+version = "0.20.2"
+source = "git+https://github.com/pliden/git2-rs.git#795f3018c4ce8e9d9d4b400a446ee91c36f5346f"
 dependencies = [
  "bitflags",
  "libc",
@@ -565,7 +565,7 @@ checksum = "58f929b4d672ea937a23a1ab494143d968337a5f47e56d0815df1e0890ddf174"
 [[package]]
 name = "libgit2-sys"
 version = "0.18.1+1.9.0"
-source = "git+https://github.com/pliden/git2-rs.git#d09306837f876c84c2ef43660abf688ec5193c81"
+source = "git+https://github.com/pliden/git2-rs.git#795f3018c4ce8e9d9d4b400a446ee91c36f5346f"
 dependencies = [
  "cc",
  "libc",
