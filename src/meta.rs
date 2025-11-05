@@ -1,11 +1,11 @@
 use crate::stdout;
-use anyhow::bail;
 use anyhow::Result;
+use anyhow::bail;
 use git2::Commit;
 use git2::Oid;
 use git2::Repository;
-use itertools::chain;
 use itertools::Itertools;
+use itertools::chain;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::collections::VecDeque;

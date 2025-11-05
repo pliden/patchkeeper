@@ -1,7 +1,7 @@
-use anyhow::anyhow;
-use anyhow::bail;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
+use anyhow::bail;
 use git2::Oid;
 use itertools::Itertools;
 use std::fmt;

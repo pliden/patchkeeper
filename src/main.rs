@@ -27,7 +27,7 @@ fn format_error(result: Result<()>) -> Result<()> {
                 Err(error)
             }
         }
-        _ => result,
+        _ => Ok(()),
     }
 }
 
