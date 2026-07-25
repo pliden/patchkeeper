@@ -2,11 +2,11 @@ use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::IndexAddOption;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 use std::path::PathBuf;
 
-immargs! {
+args! {
     AddArgs,
     -a --all            ? "add all untracked files",
     -h --help             "print help message",

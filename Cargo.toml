@@ -12,10 +12,10 @@ path = "src/main.rs"
 anyhow = "1.0"
 chrono = "0.4"
 colored = "3.0"
-ratatui = "0.29"
+ratatui = "0.30.2"
 crossterm = "0.29"
-itertools = "0.14"
-immargs = "0.1"
+itertools = "0.15.0"
+immargs = "0.1.4"
 git2 = { version = "0.20", features = ["ssh", "vendored-libgit2"] }
 
 [patch.crates-io]

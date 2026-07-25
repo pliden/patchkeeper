@@ -6,10 +6,10 @@ use anyhow::Result;
 use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     DeleteArgs,
     -i --interactive      ! "interactive mode",
     -h --help               "print help message",

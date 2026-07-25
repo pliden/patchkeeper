@@ -4,8 +4,8 @@ pk init
 pk new INITIAL
 pk finalize
 
-fail pk move | grep "error: missing argument '<src>'"
-fail pk move INVALID | grep "error: missing argument '<dest>'"
+fail pk move | grep "error: missing argument <src>"
+fail pk move INVALID | grep "error: missing argument <dest>"
 fail pk move INVALID INVALID | grep "error: file not found: INVALID"
 
 pk new A

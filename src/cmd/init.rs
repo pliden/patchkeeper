@@ -2,10 +2,10 @@ use crate::meta::Metadata;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     InitArgs,
     -h --help   "print help message",
 }

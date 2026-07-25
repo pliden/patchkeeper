@@ -3,10 +3,10 @@ use crate::repo::HEAD;
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     MessageArgs,
     -h --help   "print help message",
     <message>... String,

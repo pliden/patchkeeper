@@ -12,13 +12,13 @@ use git2::BranchType;
 use git2::FetchOptions;
 use git2::RemoteCallbacks;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::io;
 use std::io::Write;
 use std::path::Path;
 use std::str;
 
-immargs! {
+args! {
     FetchArgs,
     -h --help   "print help message",
     [<remote>] String,

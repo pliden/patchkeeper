@@ -11,10 +11,10 @@ use colored::Colorize;
 use git2::BranchType;
 use git2::Oid;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     ListArgs,
     -a --all             ! "show all branches",
     -x --hidden          ! "show hidden commit",

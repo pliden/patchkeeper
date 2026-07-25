@@ -6,10 +6,10 @@ use anyhow::Result;
 use anyhow::bail;
 use git2::BranchType;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     BhideArgs,
     -h --help   "print help message",
     [<branch>...] String,

@@ -4,7 +4,7 @@ pk message -h | usage message
 pk msg -h | usage message
 pk m -h | usage message
 
-fail pk message | grep "error: missing argument '<message>'"
+fail pk message | grep "error: missing argument <message>"
 
 pk init
 

@@ -9,10 +9,10 @@ use git2::Error;
 use git2::ErrorClass;
 use git2::ErrorCode;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     NewArgs,
     -h --help   "print help message",
     <message>... String,

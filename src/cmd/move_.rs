@@ -4,12 +4,12 @@ use anyhow::Result;
 use anyhow::anyhow;
 use anyhow::bail;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
-immargs! {
+args! {
     MoveArgs,
     -h --help "print help message",
     <src>... PathBuf,

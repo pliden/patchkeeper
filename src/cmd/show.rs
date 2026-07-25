@@ -13,11 +13,11 @@ use git2::DiffLine;
 use git2::DiffLineType;
 use git2::Oid;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::collections::HashMap;
 use std::path::Path;
 
-immargs! {
+args! {
     ShowArgs,
     -f --files "show files only",
     -h --help  "print help message",

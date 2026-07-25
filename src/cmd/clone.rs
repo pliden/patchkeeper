@@ -5,13 +5,13 @@ use git2::FetchOptions;
 use git2::RemoteCallbacks;
 use git2::build::CheckoutBuilder;
 use git2::build::RepoBuilder;
-use immargs::immargs;
+use immargs::args;
 use std::io;
 use std::io::Write;
 use std::path::PathBuf;
 use std::str;
 
-immargs! {
+args! {
     CloneArgs,
     -h --help   "print help message",
     <url> String,

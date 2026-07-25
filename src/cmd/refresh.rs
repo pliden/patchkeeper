@@ -5,10 +5,10 @@ use anyhow::Result;
 use anyhow::bail;
 use git2::Repository;
 use git2::Signature;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     RefreshArgs,
     -r --resolve     "mark all merge conflicts as resolved",
     -a --author      "update author",

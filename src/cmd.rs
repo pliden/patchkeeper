@@ -1,5 +1,5 @@
 use anyhow::Result;
-use immargs::immargs;
+use immargs::args;
 use std::env::current_dir;
 use std::path::PathBuf;
 
@@ -33,7 +33,7 @@ mod resolve;
 mod show;
 mod unhide;
 
-immargs! {
+args! {
     MainArgs,
     -r --repo <path> PathBuf   "path to repository",
     -v --version               "print version information",

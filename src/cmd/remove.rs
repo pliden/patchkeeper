@@ -1,12 +1,12 @@
 use crate::repo::RepositoryUtils;
 use anyhow::Result;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
-immargs! {
+args! {
     RemoveArgs,
     -h --help "print help message",
     <path>... PathBuf,

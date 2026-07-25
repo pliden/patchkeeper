@@ -3,8 +3,8 @@
 pk br -h | usage br
 pk brename -h | usage brename
 
-fail pk brename | grep "error: missing argument '<to>'"
-fail pk brename a b c | grep "error: invalid argument 'c'"
+fail pk brename | grep "error: missing argument <to>"
+fail pk brename a b c | grep "error: invalid argument \"c\""
 
 pk init
 pk new INITIAL

@@ -7,10 +7,10 @@ use anyhow::Result;
 use colored::Colorize;
 use git2::BranchType;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     BlistArgs,
     -r --remote   "show remote branches",
     -x --hidden   "show hidden branches",

@@ -2,7 +2,7 @@
 
 pk clone -h | usage clone
 
-fail pk clone | grep "error: missing argument '<url>'"
+fail pk clone | grep "error: missing argument <url>"
 
 pk clone $URL
 test -d patchkeeper/.git

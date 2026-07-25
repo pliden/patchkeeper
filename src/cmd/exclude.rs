@@ -5,11 +5,11 @@ use anyhow::Result;
 use anyhow::bail;
 use git2::IndexAddOption;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 use std::path::PathBuf;
 
-immargs! {
+args! {
     ExcludeArgs,
     -h --help "print help message",
     <path>... PathBuf,

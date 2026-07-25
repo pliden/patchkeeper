@@ -7,11 +7,11 @@ use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
 use git2::Signature;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 use std::str;
 
-immargs! {
+args! {
     PushArgs,
     -a --all                      ! "push all commits",
     -m --move_ <revspec> String   ! "move commit",

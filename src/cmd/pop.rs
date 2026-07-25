@@ -5,10 +5,10 @@ use anyhow::Result;
 use anyhow::bail;
 use git2::Commit;
 use git2::Repository;
-use immargs::immargs;
+use immargs::args;
 use std::path::Path;
 
-immargs! {
+args! {
     PopArgs,
     -a --all           ! "pop all commits",
     -f --finalized     ! "pop finalized commit",
